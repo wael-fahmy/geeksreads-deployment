@@ -31,7 +31,7 @@ const MONGO_URI = process.env.NODE_ENV === 'production'
                       ? 'mongodb+srv://admin:admin@geeksreads-kjyxb.gcp.mongodb.net/test?retryWrites=true' 
                       : 'mongodb://localhost:27017/GreekReaders';
 
-mongoose.connect(MONGO_URI,{ useNewUrlParser: true })
+mongoose.connect('mongodb+srv://admin:admin@geeksreads-kjyxb.gcp.mongodb.net/test?retryWrites=true',{ useNewUrlParser: true })
   .then(() => console.log('Connected to MongoDB...'))
   .catch(err => console.error(err));
 
