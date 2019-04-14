@@ -31,7 +31,8 @@
   },
   "scripts": {
     "test": "nyc mocha --timeout 15000",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "git push heroku master"
   },
   "author": "",
   "license": "ISC"
