@@ -83,7 +83,7 @@ router.get('/me', auth, async (req, res) => {
 
 /**
  *
- * @api {POST}  /user/Verify/ Verifies User From Email
+ * @api {GET}  api/users/Verify/ Verifies User From Email
  * @apiName EmailVerify
  * @apiGroup User
  * @apiHeader {String} x-auth-token Authentication token
