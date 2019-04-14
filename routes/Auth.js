@@ -44,7 +44,7 @@ const router = express.Router();
  *
  */
 
-router.post('/', async (req, res) => {
+router.post('/signin', async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
 

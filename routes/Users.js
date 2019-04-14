@@ -132,7 +132,7 @@ router.post('/verify', auth, async (req, res) => {
 
 /**
  *
- * @api {POST}  /user/SignUp/ Signs User Up and Sends Verification Email
+ * @api {POST}  api/users/signup/ Signs User Up and Sends Verification Email
  * @apiName SignUp
  * @apiGroup User
  * @apiParam {String} UserName User Name to Sign Up.
@@ -170,7 +170,7 @@ router.post('/verify', auth, async (req, res) => {
  */
 
 
-router.post('/', async (req, res) => {
+router.post('/signup', async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
   let user = await User.findOne({ UserEmail: req.body.UserEmail });

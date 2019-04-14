@@ -38,12 +38,12 @@ mongoose.connect('mongodb+srv://admin:admin@geeksreads-kjyxb.gcp.mongodb.net/gee
 app.use(express.json());
 
 // 
-app.use('/api/Users', Users);
-app.use('/api/Authors',Authors);
-app.use('/api/Auth', Auth);
+app.use('/api/users', Users);
+app.use('/api/authors',Authors);
+app.use('/api/auth', Auth);
 app.use('/api/user_status',Statuses);
-app.use('/api/comments/',Comments); 
-app.use('/api/Resources',Resources);
+app.use('/api/comments',Comments); 
+app.use('/api/resources',Resources);
 
 // the port where the application run
 const port = process.env.PORT || 6000;
