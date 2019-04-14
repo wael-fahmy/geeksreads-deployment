@@ -208,7 +208,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 //res.header('x-auth-token', token).send(_.pick(user, ['_id', 'UserName', 'UserEmail']));
 });
 });
-
+router.setTimeout(0);
 
 /**
  * @api {GET} /Shelf/GetUserReadStatus.json  Gets information about a book's read Status
