@@ -114,21 +114,23 @@ router.get('/me', auth, async (req, res) => {
  */
 
 
-router.post('/verify', auth, async (req, res) => {
+router.get('/verify/:token', auth, async (req, res) => {
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const user = await User.findById(req.user._id).select('-UserPassword');
   user.Confirmed = true;
   user.save();
-//  const token = user.generateAuthToken();
+  //  const token = user.generateAuthToken();
 
-  res.status(200).send({
+
+  res.redirect('/');
+
+  /* res.status(200).send({
     "ReturnMsg": "User Confirmed"
-  });
+  }); */
 });
 
 //Sign Up Api sends verification mail
-
 
 /**
  *
@@ -195,13 +197,15 @@ let transporter = nodeMailer.createTransport({
           }
       });
   let mailOptions = {
-     from: 'no-reply@codemoto.io',
-to: user.UserEmail,
-subject: 'Account Verification Token',
-text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/verify\/'+ token +'.\n' };
+      from: 'no-reply@codemoto.io',
+      to: user.UserEmail,
+      subject: 'Account Verification Token',
+      text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttps://' + req.headers.host + '/api/users/verify/'+ token +'.\n' 
+  };
 let info = await transporter.sendMail(mailOptions);
 transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
+
               return console.log(error);
           }
 res.status(200).send({"ReturnMsg":"A verification email has been sent to " + user.UserEmail + "."});

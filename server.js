@@ -5,6 +5,7 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 const express = require('express');
+const auth = require('../middleware/auth');
 
 require('./models/resources.model');
 // the routes used till now
@@ -39,7 +40,7 @@ app.use(express.json());
 
 // 
 app.use('/api/users', Users);
-app.use('/api/authors',Authors);
+app.use('/api/authors', Authors);
 app.use('/api/auth', Auth);
 app.use('/api/user_status',Statuses);
 app.use('/api/comments',Comments); 
