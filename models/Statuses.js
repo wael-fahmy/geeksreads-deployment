@@ -50,10 +50,6 @@ const StatusesSchema = new mongoose.Schema({
     ReviewLikesCount: {
         type: Number 
     },
-    NumberOfStars:// for rating
-    {
-        type: Number
-    },
     //////////////////////////////////
     ////////////Comment//////////////
     CommentId:
@@ -84,6 +80,11 @@ const StatusesSchema = new mongoose.Schema({
     BookPhoto:
     {
         type: String
+    },
+    
+    NumberOfStars:// for rating
+    {
+        type: Number
     }
     });
 

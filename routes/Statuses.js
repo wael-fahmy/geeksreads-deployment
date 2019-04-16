@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const express = require('express');
 const {Status,validate} = require('../models/Statuses');
 const {User} = require('../models/User');
+const {Book} =require('../models/Book');
+const {review} = require('../models/reviews.model');
+const {comment}=require('../models/comments.model');
 const auth = require('../middleware/auth');
 const Joi = require('joi');
 //const auth = require('../middleware/auth');
@@ -84,7 +87,7 @@ router.post("/",(req,res)=>
  * @apiSuccess {string} CommentId comment id if the type is comment <code>(optional)</code>
  * @apiSuccess {string} ReviewId  review Id  alawys exisit weather the type is comment or review
  * @apiSuccess {string} MakerId the id of the user who made the status
- * @apiSuccess {string} Type  Whether  it is Comment or Review
+ * @apiSuccess {string} Type  Wheather  it is Comment or Review
  * @apiSuccessExample  Expected Data on Success
  * {
  *
@@ -210,42 +213,135 @@ router.post("/delete",(req,res)=>
 
 
 });
-
-function CreatStatuses( FollowerId ,ReviewId , CommentId, Type, MakerId, NumberOfStars, BookId )
+/**
+ * Creating new statuses.
+ * @constructor
+ * @param {string} FollowerId - the Id of the ppl who will see the statuses in his new feed.
+ * @param {string} MakerId- the id of the user who made the action.
+ * @param {string} ReviewId - the id of the review 
+ * @param {string} Comment1Id - the id of the comment
+ * @param {string} Type - the type of the statuses its one of three ( Rate, Review ,Comment) stick with the naming
+ * @param {string} Book1Id the Id of the book (review or rated)
+ * @param {string} NumberOfStars if rating must send number of stars
+ * 
+ */
+function CreatStatuses( FollowerId ,ReviewId , Comment1Id, Type, MakerId, NumberOfStars, Book1Id )
 {
+// basic infos
+  var  newStatus = new Status(
+    {
+      "UserId":FollowerId,
+      "StatusType":Type, 
+    });
+    newStatus.StatusId=newStatus._id;
+//get the Maker Infos//
+    User.findOne({UserId:MakerId},(err,doc )=>
+    {
+      if (!doc)
+      {
+        return console.log("Wrong Maker Id")
+      }
+      else{
+        newStatus.MakerId=doc.UserId;
+        newStatus.MakerPhoto=doc.Photo;
+        newStatus.MakerName =doc.UserName;    
+      }
 
+    });
+/////////////////////////////////////////
+//////// three types/////////////////
+//////////////////////////////////////////
+/////review//////
 if ( type == "Review")
 {
+review.findOne({reviewId:ReviewId},(err,doc) =>
+{    
+    if (!doc)
+  {
+    return console.log("Wrong review Id")
+  }
+  else
+  {
+    newStatus.ReviewId=doc.reviewId;
+    newStatus.ReviewBody=doc.reviewBody;
+    newStatus.ReviewDate=doc.reviewDate;
+    newStatus.ReviewLikesCount= doc.likesCount;
+  
+  }
 
+});
+
+  Book.findOne({BookId:Book1Id},(err,doc) =>
+  {    
+      if (!doc)
+    {
+      return console.log("Wrong book Id")
+    }
+    else
+    {
+      newStatus.BookId=doc.BookId;
+      newStatus.BookName=doc.Title;
+      newStatus.BookPhoto=doc.Cover;    
+    }
+
+
+});
 }
 else if ( type == "Rate")
 {
+  Book.findOne({BookId:Book1Id},(err,doc) =>
+  {    
+      if (!doc)
+    {
+      return console.log("Wrong book Id")
+    }
+    else{
+      newStatus.BookId=doc.BookId;
+      newStatus.BookName=doc.Title;
+      newStatus.BookPhoto=doc.Cover;    
+    }
+  });
+newStatus.NumberOfStars =NumberOfStars;
 
 }
-else 
+else // if comment
 {
   
-}
-
-
-  var  newStatus = new Status(
-{
-  "UserId":FollowerId,
-  "ReviewId":ReviewId,
-  "CommentId":CommentId,
-  });
- newStatus.StatusId=newStatus._id;
-
- const {error} = validate(newStatus.body);
- if (error) return console.log(error.details[0].message);
-
-  if (StatusBody)
+review.findOne({reviewId:ReviewId},(err,doc) =>
+{    
+    if (!doc)
   {
-    newStatus.body=StatusBody;
+    return console.log("Wrong review Id")
   }
+  else
+  {
+    newStatus.ReviewId=doc.reviewId;
+    newStatus.ReviewBody=doc.reviewBody;
+    newStatus.ReviewDate=doc.reviewDate;
+    newStatus.ReviewLikesCount= doc.likesCount;
+  
+  }
+
+
+});
+
+comment.findOne({CommentId:Comment1Id},(err,doc) =>
+{    
+    if (!doc)
+  {
+    return console.log("Wrong comment Id")
+  }
+  else
+  {
+    newStatus.CommentId=doc.CommentId;
+    newStatus.CommentBody=doc.Body;
+    newStatus.CommentDate=doc.date;
+    newStatus.CommentLikesCount= doc.likesCount;
+  
+  }
+});
+
+};
 }
-
-
-
 module.exports = CreatStatuses;
 module.exports = router;

@@ -76,6 +76,70 @@ router.get('/me', auth, async (req, res) => {
 });
 
 
+//Update User Information (Name, Photo, Bithdate)
+
+
+/**
+ *
+ * @api {POST}  /users/UpdateUserInfo Update User Information (UserName, Photo, Date).
+ * @apiName SignIn
+ * @apiGroup User
+ *
+ * @apiParam  {String} NewUserName New User Name
+ * @apiParam  {String} NewUserPhoto New User Photo
+ * @apiParam  {Date} NewUserBirthDate New User BirthDate
+ * @apiSuccess {String}   ReturnMsg   Return Message Update is Successful
+ * @apiSuccessExample {json}  Success
+ *     HTTP/1.1 200 OK
+ * {
+ *        "ReturnMsg": "Update Successful"
+ *   }
+ * @apiErrorExample {json} InvalidName-Response:
+ *     HTTP/1.1 400
+ *  {
+ *    "ReturnMsg":"Error Detail"
+ *  }
+ * @apiErrorExample {json} InvalidPhoto-Response:
+ *     HTTP/1.1 400
+ *  {
+ *    "ReturnMsg":"Error Detail"
+ *  }
+ * @apiErrorExample {json} InvalidDate-Response:
+ *     HTTP/1.1 400
+ *  {
+ *    "ReturnMsg":"Error Detail"
+ *  }
+ * @apiErrorExample {json} Invalidtoken-Response:
+ *     HTTP/1.1 400
+ *   {
+ *      "ReturnMsg":'Invalid token.'
+ *   }
+ *
+ * @apiErrorExample {json} NoTokenSent-Response:
+ *     HTTP/1.1 401
+ * {
+ *   "ReturnMsg":'Access denied. No token provided.'
+ * }
+ *
+ *
+ */
+
+router.post('/UpdateUserInfo', auth, async (req, res) => {
+  let check = await User.findOne({ UserId: req.user._id });
+  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+  const { error } = DateValidate(req.body);
+  if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
+  const user = await User.findById(req.user._id).select('-UserPassword');
+  if(req.body.NewUserPhoto!=null) user.Photo = req.body.NewUserPhoto;
+  if(req.body.NewUserName!=null) user.UserName = req.body.NewUserName;
+  if(req.body.NewUserBirthDate!=null) user.UserBirthDate = req.body.NewUserBirthDate;
+  user.save();
+//  const token = user.generateAuthToken();
+
+  res.status(200).send({
+    "ReturnMsg": "Update Successful"
+  });
+});
 
 
 //Verify From Email Link
@@ -123,7 +187,7 @@ router.get('/verify/:token', auth, async (req, res) => {
   //  const token = user.generateAuthToken();
 
 
-  res.redirect('/verified');
+  res.sendFile('/verified.html');
 
   /* res.status(200).send({
     "ReturnMsg": "User Confirmed"

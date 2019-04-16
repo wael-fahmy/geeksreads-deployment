@@ -1,56 +1,86 @@
+
+const Joi = require('joi');
+const express = require('express');
+const mongoose= require ('mongoose');
+const {review} = require('../models/reviews.model');
+const {comment}=require('../models/comments.model');
+const router = express.Router();
 /**
- * @api {PUT} /like Like a resource 
+ * @api {Post} /like Like a resource 
  * @apiName PutLike
  * @apiGroup Resources
  * @apiError {404} NOTFOUND Resource could not be found
- * @apiParam {Number} resourceId Id of the resource being liked.
- *  @apiSuccessExample Success-Response:
+ * @apiParam {string} resourceId Id of the resource being liked( the comment or the review)
+ * @apiParam {string} Type must be (Review,Comment) Naming system is important
+ *  
+ * @apiSuccess {boolen} Liked
+ * 
+ *   @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *          {
- *              Liked
+ *              "Liked": true
  *          }
  */
 
-const Joi = require('joi');
- const express = require('express');
- const mongoose= require ('mongoose');
-const {Resource} =require('../models/resources.model');
-const router = express.Router();
-
-router.put('/like',(req,res)=>{
+router.post('/like',(req,res)=>{
 
     // input validation
-    
+    console.log(req.body.resourceId);
+    if (req.body.resourceId == null)
+    { 
+        res.status(400).send(" wrong parameters no id");
+   
+    }
 
- var error= null;
- if (req.body.ResourceID.lenght = 0)
+ if (req.body.resourceId.lenght == 0)
  {
-     error=1 ;
- }  
+     res.status(400).send(" wrong parameters no id")
+ }   
 
-    if(error)
-    {
-       return res.status(404).send(error.details[0].message);
-    }
+ if (req.body.Type == "Comment")
+ {
+    comment.findOneAndUpdate({CommentId: req.body.resourceId},{ $inc: { LikesCount: 1 } },function(err, doc){
+        if(err){
+            console.log("Something wrong when updating data!");
+        }
     
-   Resource.findByIdAndUpdate({ResourceID:req.body.ResourceID},{ $inc: { likes: 1 } },
-    function(err, doc){
-    if(err){
-        console.log("Something wrong when updating data!");
-    }
-
-    if (!doc)
+        if (!doc)
+        {
+            return res.status(404).send("Not found");
+       
+        }
+        if (doc)
+        {
+            return res.status(200).send("liked");
+       
+        }
+    });
+}
+   else if (req.body.Type == "Review")
     {
-        return res.status(200).send("liked");
-   
-    }
-    console.log(doc);
-    res.send(doc);
-    res.send('liked..')
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: 1 } },function(err, doc){
+           if(err){
+               console.log("Something wrong when updating data!");
+           }
+       
+           if (!doc)
+           {
+               return res.status(404).send("Not found");
+          
+           }
+           if (doc)
+           {
+               return res.status(200).send("liked");
+          
+           }
+       });
+    }          
+ else // wrong type
+ {
+   res.status(400).send("wrong type");
+ }    
 
-});
-   
- 
+
   
 });
 
@@ -71,33 +101,66 @@ router.put('/like',(req,res)=>{
  * 
  */
 
-router.put('/unlike',(req,res)=>{
-    // input validation
-      console.log(req.body);
-   
-      const {error}= validate(req.body);
-   
-      console.log(error);
-      if(error)
-      {
-         return res.status(404).send(error.details[0].message);
-      }
-      
-     Resource.findByIdAndUpdate({ResourceID:req.body.ResourceID},{ $inc: { likes: -1 } },
-      function(err, doc){
-      if(err){
-          console.log("Something wrong when updating data!");
-      }
-   
-      if (!doc)
-      {
-          return res.status(404).send("resource not found");
-     
-      }
-      console.log(doc);
-      res.send(doc);
-   
-   });
+router.post('/like',(req,res)=>{
 
-   });
+    // input validation
+    console.log(req.body.resourceId);
+    if (req.body.resourceId == null)
+    { 
+        res.status(400).send(" wrong parameters no id");
+   
+    }
+
+ if (req.body.resourceId.lenght == 0)
+ {
+     res.status(400).send(" wrong parameters no id")
+ }   
+
+ if (req.body.Type == "Comment")
+ {
+    comment.findOneAndUpdate({CommentId: req.body.resourceId},{ $inc: { LikesCount: -1 } },function(err, doc){
+        if(err){
+            console.log("Something wrong when updating data!");
+        }
+    
+        if (!doc)
+        {
+            return res.status(404).send("Not found");
+       
+        }
+        if (doc)
+        {
+            return res.status(200).send("liked");
+       
+        }
+    });
+}
+   else if (req.body.Type == "Review")
+    {
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: -1 } },function(err, doc){
+           if(err){
+               console.log("Something wrong when updating data!");
+           }
+       
+           if (!doc)
+           {
+               return res.status(404).send("Not found");
+          
+           }
+           if (doc)
+           {
+               return res.status(200).send("liked");
+          
+           }
+       });
+    }          
+ else // wrong type
+ {
+   res.status(400).send("wrong type");
+ }    
+
+
+  
+});
+
 module.exports = router;

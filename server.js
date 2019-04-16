@@ -16,6 +16,7 @@ const Comments = require("./routes/commentsController");
 const Review = require("./routes/reviewsController");
 const Resources= require("./routes/Resources");
 const Books = require("./routes/Books");
+const OwnedBooks= require("./routes/ownedBooks");
 
 const app = express();
 
@@ -47,6 +48,8 @@ app.use('/api/comments',Comments);
 app.use('/api/review',Review);
 app.use('/api/resources',Resources);
 app.use ('/api/book',Books);
+app.use('/api/owned_books',OwnedBooks);
+
 
 // the port where the application run
 const port = process.env.PORT || 6000;

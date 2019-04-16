@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
+  UserBirthDate: {
+    type: Date,
+    default: "00\00\0000"
+  },
   UserPassword: {
     type: String,
     required: true,
@@ -95,5 +99,14 @@ UserPassword: Joi.string().min(6).max(255).required()
 };
 return Joi.validate(User, schema);
 }
+function validateDate(User) {
+const schema = {
+NewUserBirthDate: Joi.date(),
+NewUserName: Joi.string().min(3).max(50).required(),
+NewUserPhoto: Joi.string().min(0).max(1024)
+};
+return Joi.validate(User, schema);
+}
 exports.User = User;
 exports.validate= validateUser;
+exports.DateValidate= validateDate;
