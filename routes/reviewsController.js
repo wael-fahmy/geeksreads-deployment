@@ -7,6 +7,28 @@ const user = require('../models/User').User;
 const Joi = require('joi');
 ///////////////////Req and Res Logic////////////////////////
 ////post////
+/**
+ * @apiSuccess  {Boolean} AddedReviewSuc Review was added successfully
+ * @apiSuccessExample
+ * HTTP/1.1 200 OK
+ * {
+ * "AddedCommentSuc": true
+ * }
+ * @api{POST} /review/add add review
+ * @apiName AddReview
+ * @apiGroup Review
+ * @apiParam{String} reviewBody The body of the review  
+ * @apiParam{Number} bookId  id of book reviewd on
+ * @apiParam{Number} reviewId  id review 
+ * @apiParam{String} userName Name of user who wrote the review
+ * @apiParam{Number} userID  Id of user who wrote the review
+ * @apiParam{String} photo User Photo 
+ * @apiParam{datePicker} reviewDate the date the review was written on
+ * @apiParam{Number} likesCount number of likes on this review
+ * @apiParam{Number} rating number rating on review
+ * @apiParam{String} shelf shelf name in which review is in
+ * @apiError EmptyComment Must Have At Least <code>1</code> Character In Comment
+ */
 Router.post('/add', async (req, res) => {
      const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -40,7 +62,21 @@ Router.post('/add', async (req, res) => {
 });
 ///////////////////////////////////////////////
 ////Remove////
-Router.post('/remove',async (req,res)=>{
+/**
+ * @api{DELETE}/geeksreads/:review Delete review 
+ * @apiName deletereview
+ * @apiParam{Number} reviewId  id review 
+ * @apiGroup Review 
+ * @apiError {404} NOTFOUND the review you are looking for does not exist
+ * @apiSuccess {Boolean} deleteReviewSuc review was deleted
+ * @apiSuccessExample
+ * HTTP/1.1 200 OK
+ * {
+ * "deleteReviewSuc": true
+ * }
+ * @apiParam {ObjectId} review_Id Id of the review to be deleted
+ */
+Router.delete('/remove',async (req,res)=>{
     const { error } = validateget(req.body);
     if (error) return res.status(400).send(error.details[0].message);
  review.findOneAndDelete({'reviewId':req.body.reviewId},(err)=>{
