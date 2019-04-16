@@ -187,7 +187,7 @@ router.get('/verify/:token', auth, async (req, res) => {
   //  const token = user.generateAuthToken();
 
 
-  res.sendFile('/verified.html');
+  res.sendFile('/verified');
 
   /* res.status(200).send({
     "ReturnMsg": "User Confirmed"
