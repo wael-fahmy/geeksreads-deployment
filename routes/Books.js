@@ -9,6 +9,72 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const Book= require('../models/Book.model');
+//Find book by ID.
+/**
+ * @api {GET} /api/book/byid/?book_id=Value Find book by BookId
+ * @apiVersion 0.0.0
+ * @apiName GetBook
+ * @apiGroup Books
+ *
+ *
+ * @apiParam  {string} id Book ID.
+ *
+ * @apiSuccess {String} BookId         Book-ID.
+ * @apiSuccess {String} Title         Book-Title.
+ * @apiSuccess {String} AuthorId         Author-ID.
+ * @apiSuccess {String} ISBN         Book-ISBN.
+ * @apiSuccess {DatePicker} Published         Date when book was published.
+ * @apiSuccess {String} Publisher         The name of the book's publisher.
+ * @apiSuccess {Number}   Pages       Number of book pages.
+ * @apiSuccess {String} Description         Small breifing about the book's contents.
+ * @apiSuccess {String} Cover         Link that holds the book's cover picture.
+ * @apiSuccess {String[]} Store         Links for webpages that store the book.
+ * @apiSuccess {Select} ReadStatus         Read, Currently Reading, or Want to Read.
+ * @apiSuccess {Number}   BookRating       Rating for the book.
+ * @apiSuccessExample {json} Success
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "BookId":"5c911452bbfd1717b8a7a169",
+ *       "Title":"sit",
+ *       "AuthorId":"5c911452a48b42bb84bc785c",
+ *       "ISBN":"5c911452ce18b2b3276d4b45",
+ *       "Published":"2001-05-08 ",
+ *       "Publisher":"COREPAN",
+ *       "Pages":226.0,
+ *       "Description":"Ad officia duis enim occaecat ullamco aliqua sint mollit non ea et ea aliqua ea. Reprehenderit eu ut in elit ex eu. Excepteur Lorem est ad amet sunt.\r\n",
+ *       "Cover":"http://placehold.it/32x32",
+ *       "Store":["http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32"],
+ *       "ReadStatus":"Read",
+ *       "BookRating":5.0,
+ *       "Genre":"Horror"
+ *     }
+ *
+ *
+ * @apiError Book-not-found   The <code>Book</code> was not found.
+ */
+
+router.get('/byid', async (req,res) => {
+  
+        
+      
+   mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
+   (err,doc) =>{
+    
+     if(!doc || err)
+     {
+       res.status(404).json({  // sends a json with 404 code
+         success: false ,  // book not retrieved  
+          "Message":"Book ID not  found !"});
+     }
+      else
+      {
+      res.status(200).json(doc);
+     
+      }
+     }
+ 
+ 
+   )}); 
 
 //Find book by title, author, or ISBN.
 /**
@@ -76,7 +142,7 @@ router.get("/find",(req,res)=>
      else if (req.body.Isbn!=null)
      {
         field = 'Isbn';
-        given = req.body.Isbn!=null;
+        given = req.body.Isbn;
      }
      else
      {
@@ -102,7 +168,7 @@ router.get("/find",(req,res)=>
 //Get reviews from book by id 
 /**
  * 
- * @api {GET} /api/Book/byid/?book_id=Value Get book reviews by id 
+ * @api {GET} /api/book/reviewbyid/?book_id=Value Get book reviews by id 
  * @apiName GetReviewsbyBookId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -134,7 +200,7 @@ router.get("/find",(req,res)=>
  */
 
 
-    router.get('/byid', async (req,res) => {
+    router.get('/reviewbyid', async (req,res) => {
   
         
       
@@ -202,3 +268,87 @@ router.get('/byisbn', async (req,res) => {
    )}); 
 
        
+/**
+ * @api {GET} /book/genre Find all books with the same Genre
+ * @apiVersion 0.0.0
+ * @apiName GetBooksByGerne
+ * @apiGroup Books
+ *
+ *
+ * @apiParam  {string} Genre the specfic Genre
+ *
+ * @apiSuccess {String} BookId         Book-ID.
+ * @apiSuccess {String} Title         Book-Title.
+ * @apiSuccess {String} AuthorId         Author-ID.
+ * @apiSuccess {String} ISBN         Book-ISBN.
+ * @apiSuccess {DatePicker} Published         Date when book was published.
+ * @apiSuccess {String} Publisher         The name of the book's publisher.
+ * @apiSuccess {Number}   Pages       Number of book pages.
+ * @apiSuccess {String} Description         Small breifing about the book's contents.
+ * @apiSuccess {String} Cover         Link that holds the book's cover picture.
+ * @apiSuccess {String[]} Store         Links for webpages that store the book.
+ * @apiSuccess {Select} ReadStatus         Read, Currently Reading, or Want to Read.
+ * @apiSuccess {Number}   BookRating       Rating for the book.
+ * @apiSuccessExample {json} Success
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "BookId":"5c911452bbfd1717b8a7a169",
+ *       "Title":"sit",
+ *       "AuthorId":"5c911452a48b42bb84bc785c",
+ *       "ISBN":"5c911452ce18b2b3276d4b45",
+ *       "Published":"2001-05-08 ",
+ *       "Publisher":"COREPAN",
+ *       "Pages":226.0,
+ *       "Description":"Ad officia duis enim occaecat ullamco aliqua sint mollit non ea et ea aliqua ea. Reprehenderit eu ut in elit ex eu. Excepteur Lorem est ad amet sunt.\r\n",
+ *       "Cover":"http://placehold.it/32x32",
+ *       "Store":["http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32"],
+ *       "ReadStatus":"Read",
+ *       "BookRating":5.0,
+ *       "Genre":"Horror"
+ *     },
+ *      {
+ *       "BookId":"5c9114ddlfd2bbfd1717b8a7a169",
+ *       "Title":"ssdst",
+ *       "AuthorId":"5c911452a48b42bb84bc785c",
+ *       "ISBN":"5c911452ce18b2b3276d4b45",
+ *       "Published":"2001-05-08 ",
+ *       "Publisher":"COREPAN",
+ *       "Pages":226.0,
+ *       "Description":"Ad officia duis enim occaecat ullamco aliqua sint mollit non ea et ea aliqua ea. Reprehenderit eu ut in elit ex eu. Excepteur Lorem est ad amet sunt.\r\n",
+ *       "Cover":"http://placehold.it/32x32",
+ *       "Store":["http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32","http://placehold.it/32x32"],
+ *       "ReadStatus":"Read",
+ *       "BookRating":5.0,
+ *       "Genre":"Horror"
+ *     },
+ * {
+ * ................
+ * .............
+ * }
+ * 
+ * 
+ *
+ *
+ * @apiError genre-not-found   The <code>genre</code> was not found.
+ */
+router.get('/genre', async (req,res) => {
+  if (!req.query.Genre)
+  {
+    res.status(400).send("Bad request no genre")
+  }
+  mongoose.connection.collection("Books").find({Genre:req.query.Genre},
+    (err,doc) =>{ 
+      if (!doc)
+      {
+        res.status(404).send("No books with this Gerne was Found")
+      }
+      else 
+      {
+        res.status(200).send(doc);
+      }
+
+    });
+  });
+  
+ 
+module.exports = router;

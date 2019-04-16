@@ -211,15 +211,29 @@ router.post("/delete",(req,res)=>
 
 });
 
-function CreatStatuses( FollowerId ,ReviewId ,StatusDate, CommentId, StatusBody )
+function CreatStatuses( FollowerId ,ReviewId , CommentId, Type, MakerId, NumberOfStars, BookId )
 {
+
+if ( type == "Review")
+{
+
+}
+else if ( type == "Rate")
+{
+
+}
+else 
+{
+  
+}
+
+
   var  newStatus = new Status(
 {
   "UserId":FollowerId,
   "ReviewId":ReviewId,
   "CommentId":CommentId,
-  "StatusDate":StatusDate
- });
+  });
  newStatus.StatusId=newStatus._id;
 
  const {error} = validate(newStatus.body);
@@ -230,31 +244,6 @@ function CreatStatuses( FollowerId ,ReviewId ,StatusDate, CommentId, StatusBody 
     newStatus.body=StatusBody;
   }
 }
-
-function CreatStatusBody(UserId,CommentId,ReviewId,bookId)
-{
-User.findOne({'UserId': UserId},(err,doc)=>{
-  if  (!doc)
-{
-  return console.log (" there no scuch a user ")
-}
-
-if (doc)
-{
-  if (CommentId)
-  {
-  return newStatus.body= doc.UserName + " commented on " +ReviewId;
-  }
-
-  else if (bookId){
-
-
-   return newStatus.body = doc.UserName + " reviewed on " +ReviewId;
-  }
-  else return null
-}
-    });
-  }
 
 
 

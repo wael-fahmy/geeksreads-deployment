@@ -9,32 +9,81 @@ const StatusesSchema = new mongoose.Schema({
         type: String,
         unique :true // it must be unique
     },
+    
+    StatusType:
+    {
+        type:String // wheather a comment or rate or review 
+    },
+    
     UserId:
     {
         type: String
     },
-    
-    TheMakerId:
-    {
+    //////////////////////////////////
+    /////////////makerrrr/////////////     
+    MakerId:
+      {
         type: String
-    },
+      },
+      MakerPhoto:
+      {
+        type: String//url
+      },
+    MakerName:
+      {
+        type: String
+      },
+
+      //////////////////////////////////
+      /////////////Revieww////////////   
     ReviewId:
     {
         type: String
     },
+    ReviewBody: {
+        type: String
+    },
+    ReviewDate: {
+        type: Date
+    },
+    
+    ReviewLikesCount: {
+        type: Number 
+    },
+    NumberOfStars:// for rating
+    {
+        type: Number
+    },
+    //////////////////////////////////
+    ////////////Comment//////////////
     CommentId:
     {
         type: String
     },
-    
-    StatusBody:
+    CommentBody: 
+    {
+        type: String//4 /to validate /done
+    },
+    CommentDate:
+    {
+    type: Date
+    },
+    CommentLikesCount: {
+        type: Number //9 /done
+    },
+    ////////////////////////////////////////
+    //////////BOook/////////////////////
+    BookId:
     {
         type: String
-        
     },
-    StatusDate:
+    BookName:
     {
-        type: Date
+        type: String
+    },
+    BookPhoto:
+    {
+        type: String
     }
     });
 

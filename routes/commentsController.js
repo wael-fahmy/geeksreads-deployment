@@ -3,12 +3,13 @@ var express = require('express');
 var Router = express.Router();
 const mongoose = require('mongoose');
 const {validate,comment} = require('../models/comments.model');
+const user = require("../models/User").User;
 const resource =mongoose.model('Resources');
 const Joi = require('joi');
 ///////////////////Req and Res Logic////////////////////////
 ////get////
 /**
- * @api{GET}/comment.json List comments on a subject 
+ * @api{GET}/comment/list List comments on a subject 
  * @apiName listCommentsOnSubject
  * @apiGroup Comments 
  * @apiError {404} NOTFOUND no comments on this subject
@@ -25,6 +26,7 @@ const Joi = require('joi');
  *           "body": "Hello World !",
  *           "userName": "zzzdwsdsdsdsd zzzdwsdsdsdsd",
  *           "userId": "567890987654567890",
+ *           "Photo": "url",
  *           "date": "2019-01-02T09:00:16.204Z"
  *         },......
  * ]
@@ -34,7 +36,7 @@ const Joi = require('joi');
  * @apiParam{Number} perPage Number of comments per page default is <code>20</code>
  * @apiParam{Number} pageNumber Number of current page default is <code>1</code>
  */
-Router.get('/', async (req, res) => {
+Router.get('/list', async (req, res) => {
     const { error } = validateget(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -53,41 +55,47 @@ Router.get('/', async (req, res) => {
  * {
  * "AddedCommentSuc": true
  * }
- * @api{POST}/comment.json Create a comment
+ * @api{POST}/comment/create Create a comment
  * @apiName creatComment
  * @apiGroup Comments
  * @apiParam{String} Body The body of the comment  
  * @apiParam{String} type Subject Type Commented On; book,review,etc
- * @apiParam{Number} ID  Id of resource given as type Parameter
+ * @apiParam{Number} BookId  id of book commented on
+ * @apiParam{Number} ReviewId  id review commented on
+ * @apiParam{Number} CommentId  id of comment
  * @apiParam{String} userName Name of user who wrote the comment
  * @apiParam{Number} userID  Id of user who wrote the comment
+ * @apiParam{String} Photo User Photo 
  * @apiParam{datePicker} date the date the comment was written on
+ * @apiParam{Number} LikesCount number of likes on this comment
  * @apiError EmptyComment Must Have At Least <code>1</code> Character In Comment
  */
 
-Router.post('/', async (req, res) => {
+Router.post('/create', async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     var comment1 = new comment();
-    var resource1 = new resource();
+    //////////////////////////////////////////////////////////////
+    let check = await user.findOne({ UserId: req.body.userId });
+    if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+    const user1 = await user.findById(req.body.userId);
+    //////////////////////////////////////////////////////////////
     comment1.Body = req.body.Body;//1
     comment1.userId=req.body.userId;//2
-    comment1.userName = req.body.userName;//3
+    comment1.userName = user1.UserName; //3
     comment1.date = req.body.date;//4
     comment1.BookId=req.body.BookId;//5
     comment1.ReviewId=req.body.ReviewId;//6
     comment1.CommentId=comment1._id;  //7
-    resource1.resourceId=resource1._id;//1
-    resource1.reviewId= null;//2
-    resource1.userId=req.body.userId;//3
-    resource1.CommentId=comment1._id;//4
-    resource1.likes=0;//5
-    resource1.type='comment';//6
+    comment1.Photo= user1.Photo; //8
+    comment1.LikesCount= 0; //9
+    console.log(user1.UserName);
+    console.log(user1.UserId);
+    console.log(comment1);
     comment1.save((err, doc) => {
         if (!err) {           
             
             res.json({ "AddedCommentSuc": true });
-            resource1.save();
         }
         else {
             res.json({ "AddedCommentSuc": false });

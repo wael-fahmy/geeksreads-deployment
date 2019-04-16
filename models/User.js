@@ -25,7 +25,10 @@ const UserSchema = new mongoose.Schema({
 
   },
   Photo :{
-    type: String
+    type: String,
+    default: "",
+    minlength: 0,
+    maxlength: 1024
   },
   FollowingAuthorId:{
     type:"array",
