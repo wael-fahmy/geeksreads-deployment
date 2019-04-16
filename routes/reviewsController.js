@@ -14,7 +14,7 @@ const Joi = require('joi');
  * {
  * "AddedCommentSuc": true
  * }
- * @api{POST} /review/add add review
+ * @api{POST} /review/add Add review
  * @apiName AddReview
  * @apiGroup Review
  * @apiParam{String} reviewBody The body of the review  
@@ -63,7 +63,7 @@ Router.post('/add', async (req, res) => {
 ///////////////////////////////////////////////
 ////Remove////
 /**
- * @api{DELETE}/geeksreads/:review Delete review 
+ * @api{DELETE} /review/remove Delete review 
  * @apiName deletereview
  * @apiParam{Number} reviewId  id review 
  * @apiGroup Review 

@@ -84,7 +84,7 @@ router.post("/",(req,res)=>
  * @apiSuccess {string} CommentId comment id if the type is comment <code>(optional)</code>
  * @apiSuccess {string} ReviewId  review Id  alawys exisit weather the type is comment or review
  * @apiSuccess {string} MakerId the id of the user who made the status
- * @apiSuccess {string} Type  Wheather  it is Comment or Review
+ * @apiSuccess {string} Type  Whether  it is Comment or Review
  * @apiSuccessExample  Expected Data on Success
  * {
  *

@@ -8,7 +8,7 @@ const {Book,validate} = require('../models/Book');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Book= require('../models/Book.model');
+
 //Find book by ID.
 /**
  * @api {GET} /api/book/byid/?book_id=Value Find book by BookId
@@ -275,7 +275,7 @@ router.get('/byisbn', async (req,res) => {
  * @apiGroup Books
  *
  *
- * @apiParam  {string} Genre the specfic Genre
+ * @apiParam  {string} Genre the specfic Genre name
  *
  * @apiSuccess {String} BookId         Book-ID.
  * @apiSuccess {String} Title         Book-Title.
