@@ -19,6 +19,7 @@ const Books = require("./routes/Books");
 const OwnedBooks= require("./routes/ownedBooks");
 
 const app = express();
+
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -34,11 +35,8 @@ var allowCrossDomain = function(req, res, next) {
 };
 
 
-  app.use(allowCrossDomain);
- // app.use(express.bodyParser());
-  //app.use(express.methodOverride());
-  //app.use(app.router);
-  app.use(express.static('static'));
+app.use(allowCrossDomain);
+app.use(express.static('static'));
   //app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 
@@ -70,6 +68,12 @@ app.use('/api/reviews', Review);
 app.use('/api/resources', Resources);
 app.use('/api/books', Books);
 app.use('/api/owned_books', OwnedBooks);
+
+
+app.use((req, res, next) => {
+  console.log("caught this path and redirected to index", req.path);
+  res.sendFile(__dirname + '/static/index.html');
+});
 
 
 // the port where the application run

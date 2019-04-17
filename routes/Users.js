@@ -187,7 +187,9 @@ router.get('/verify/:token', auth, async (req, res) => {
   //  const token = user.generateAuthToken();
 
 
-  res.redirect('/');
+  res.redirect('/verified');// a3ml eh
+  // ana b test bs mstny el mail// ana msh l2y el site enta 3al localhost?
+  //aywa ana 3la el localhost 3ndy
 
   /* res.status(200).send({
     "ReturnMsg": "User Confirmed"
