@@ -13,7 +13,7 @@ const router = express.Router();
 
 
 /**
- * @api{Post} /user_status/ Update user status
+ * @api{Post} /api/user_status/update Update user status
  * @apiVersion 0.0.0
  * @apiName UpdateUserStatuses
  * @apiGroup Status
@@ -35,7 +35,7 @@ const router = express.Router();
  * @apiError Status-Not-Found The <code>Status</code> was not found
  */
 
-router.post("/",(req,res)=>
+router.post("/update",(req,res)=>
 {
 
  if (req.body.length == 0)
@@ -75,7 +75,7 @@ router.post("/",(req,res)=>
 
 });
   /**
- * @api{Get} /user_status/show Get User Status
+ * @api{Get} /api/user_status/show Get User Status
  * @apiVersion 0.0.0
  * @apiName GetUserStatuses
  * @apiGroup Status
@@ -163,7 +163,7 @@ router.get("/show",auth ,(req,res)=>
 
 
 });/**
-* @api{Post} /user_status/delete Delete User Status
+* @api{Post} /api/user_status/delete Delete User Status
 * @apiVersion 0.0.0
 * @apiName DeleteStatus
 * @apiGroup Status

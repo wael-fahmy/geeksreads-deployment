@@ -14,7 +14,7 @@ const router = express.Router();
 
 /**
  *
- * @api {POST}  /user/SignIn/ Signing in by Email and Password
+ * @api {POST}  /api/auth/signin Signing in by Email and Password
  * @apiName SignIn
  * @apiGroup User
  *

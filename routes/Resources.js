@@ -6,7 +6,7 @@ const {review} = require('../models/reviews.model');
 const {comment}=require('../models/comments.model');
 const router = express.Router();
 /**
- * @api {Post} /like Like a resource 
+ * @api {Post} /api/resources/like Like a resource 
  * @apiName PutLike
  * @apiGroup Resources
  * @apiError {404} NOTFOUND Resource could not be found
@@ -88,7 +88,7 @@ router.post('/like',(req,res)=>{
 /////Unlike a Resource/////
 
 /**
- * @api {PUT} /unlike Unlike a resource 
+ * @api {PUT} /api/resources/unlike Unlike a resource 
  * @apiName PutUnlike
  * @apiGroup  Resources
  * @apiError {404} NOTFOUND Resource could not be found

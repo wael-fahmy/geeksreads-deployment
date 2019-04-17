@@ -17,7 +17,7 @@ const Author= require('../models/Author.model');
 
 /**
  *
- * @api {GET}  /user/me Gets Information of Current User
+ * @api {GET}  /api/users/me Gets Information of Current User
  * @apiName GetUser
  * @apiGroup User
  * @apiHeader {String} x-auth-token Authentication token
@@ -81,7 +81,7 @@ router.get('/me', auth, async (req, res) => {
 
 /**
  *
- * @api {POST}  /users/UpdateUserInfo Update User Information (UserName, Photo, Date).
+ * @api {POST}  /users/update Update User Information (UserName, Photo, Date).
  * @apiName SignIn
  * @apiGroup User
  *
@@ -124,7 +124,7 @@ router.get('/me', auth, async (req, res) => {
  *
  */
 
-router.post('/UpdateUserInfo', auth, async (req, res) => {
+router.post('/update', auth, async (req, res) => {
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const { error } = DateValidate(req.body);
@@ -147,7 +147,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 /**
  *
- * @api {GET}  api/users/verify/:token Verifies User From Email
+ * @api {GET}  /api/users/verify/:token Verifies User From Email
  * @apiName EmailVerify
  * @apiGroup User
  * @apiHeader {String} x-auth-token Authentication token
@@ -187,7 +187,7 @@ router.get('/verify/:token', auth, async (req, res) => {
   //  const token = user.generateAuthToken();
 
 
-  res.sendFile('/');
+  res.redirect('/');
 
   /* res.status(200).send({
     "ReturnMsg": "User Confirmed"
@@ -198,7 +198,7 @@ router.get('/verify/:token', auth, async (req, res) => {
 
 /**
  *
- * @api {POST}  api/users/signup/ Signs User Up and Sends Verification Email
+ * @api {POST}  /api/users/signup Signs User Up and Sends Verification Email
  * @apiName SignUp
  * @apiGroup User
  * @apiParam {String} UserName User Name to Sign Up.
@@ -279,7 +279,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 
 
 /**
- * @api {GET} /shelf/GetUserReadStatus  Gets information about a book's read Status
+ * @api {GET} /api/users/bookstatus  Gets information about a book's read Status
  * @apiName GetUserReadStatus
  * @apiGroup Shelves
  *
@@ -328,7 +328,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 
 
 
- router.get('/GetBookReadStatus', auth, async (req, res) => {
+ router.get('/bookstatus ', auth, async (req, res) => {
    let check = await User.findOne({ UserId: req.user._id });
    if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
    let Read =  await User.findOne({ Read:req.body.BookId });
@@ -347,7 +347,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 
 
  /**
-  * @api {GET} /shelf/GetUserShelves  Gets All User's Shelves
+  * @api {GET} /api/users/shelves  Gets All User's Shelves
   * @apiName GetUserShelves
   * @apiGroup Shelves
   *
@@ -395,7 +395,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
   */
 
 
-  router.get('/GetUserShelves', auth, async (req, res) => {
+  router.get('/shelves', auth, async (req, res) => {
     let check = await User.findOne({ UserId: req.user._id });
     if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
     const user = await User.findById(req.user._id).select('-UserPassword  -_id  -__v -UserId -UserEmail -Photo -Confirmed -UserName -FollowingAuthorId -FollowingUserId -FollowersUserId -OwnedBookId');
@@ -405,7 +405,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 
 /**
  *
- * @api {POST}  /api/Users/Follow Follow a user
+ * @api {POST}  /api/users/follow Follow a user
  * @apiName Follow user
  * @apiGroup User
  * @apiError {404} id-not-found The<code>userId_tobefollowed</code> was not found.
@@ -430,7 +430,7 @@ res.status(200).send({"ReturnMsg":"A verification email has been sent to " + use
 
 
 //Follow User
-router.post('/Follow', async (req, res) => { //sends post request to /Follow End point through the router
+router.post('/follow', async (req, res) => { //sends post request to /Follow End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
@@ -474,7 +474,7 @@ router.post('/Follow', async (req, res) => { //sends post request to /Follow End
   //UNFollow User
  /**
  *
- * @api {POST}  /api/Users/unFollow Unfollow a user
+ * @api {POST}  /api/users/unfollow Unfollow a user
  * @apiName Unfollow user
  * @apiGroup User
  * @apiError {404} id-not-found The<code>userId_tobefollowed</code> was not found.
@@ -500,7 +500,7 @@ router.post('/Follow', async (req, res) => { //sends post request to /Follow End
  */
 
   //UNFollow User
-  router.post('/unFollow', async (req, res) => { //sends post request to /unFollow End point through the router
+  router.post('/unfollow', async (req, res) => { //sends post request to /unFollow End point through the router
     /* console.log(req.body.userId_tobefollowed);
     console.log(req.userId_tobefollowed);
     console.log(req.params.userId_tobefollowed);

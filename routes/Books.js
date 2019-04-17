@@ -11,7 +11,7 @@ const router = express.Router();
 
 //Find book by ID.
 /**
- * @api {GET} /api/book/byid/?book_id=Value Find book by BookId
+ * @api {GET} /api/books/id Find book by BookId
  * @apiVersion 0.0.0
  * @apiName GetBook
  * @apiGroup Books
@@ -53,7 +53,7 @@ const router = express.Router();
  * @apiError Book-not-found   The <code>Book</code> was not found.
  */
 
-router.get('/byid', async (req,res) => {
+router.get('/id', async (req,res) => {
   
         
       
@@ -78,7 +78,7 @@ router.get('/byid', async (req,res) => {
 
 //Find book by title, author, or ISBN.
 /**
- * @api {GET} /book/find Find book by title, author, or ISBN. Gets found book
+ * @api {GET} /api/books/find Find book by title, authorID, or ISBN. Gets found book
  * @apiVersion 0.0.0
  * @apiName FindBooks
  * @apiGroup Books
@@ -168,7 +168,7 @@ router.get("/find",(req,res)=>
 //Get reviews from book by id 
 /**
  * 
- * @api {GET} /api/book/reviewbyid/?book_id=Value Get book reviews by id 
+ * @api {GET} /api/books/reviews Get book reviews by id 
  * @apiName GetReviewsbyBookId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -200,9 +200,9 @@ router.get("/find",(req,res)=>
  */
 
 
-    router.get('/reviewbyid', async (req,res) => {
+    router.get('/reviews', async (req,res) => {
   
-        
+        //get reviews enta kda btrg3 books brdo ya sameh
       
         mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
         (err,doc) =>{
@@ -226,7 +226,7 @@ router.get("/find",(req,res)=>
         //convert isbns to ids
         /**
  * 
- * @api {get} /api/Book/byisbn/?book_isbn=Value Get Geeksreads book IDs given ISBNs
+ * @api {get} /api/books/isbn Get Geeksreads book IDs given ISBNs
  * @apiName IsbntoId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -245,7 +245,7 @@ router.get("/find",(req,res)=>
  * @apiError Books-Not-Found Some or all of the ISBNs entered are not valid.
  */
 
-router.get('/byisbn', async (req,res) => {
+router.get('/isbn', async (req,res) => {
   
  
    mongoose.connection.collection("Books").findOne({BookIsbn:req.query.book_isbn},
@@ -269,7 +269,7 @@ router.get('/byisbn', async (req,res) => {
 
        
 /**
- * @api {GET} /book/genre Find all books with the same Genre
+ * @api {GET} /api/books/genre Find all books with the same Genre
  * @apiVersion 0.0.0
  * @apiName GetBooksByGerne
  * @apiGroup Books

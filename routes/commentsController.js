@@ -9,7 +9,7 @@ const Joi = require('joi');
 ///////////////////Req and Res Logic////////////////////////
 ////get////
 /**
- * @api{GET}/comment/list List comments on a subject 
+ * @api{GET} /api/comments/list List comments on a subject 
  * @apiName listCommentsOnSubject
  * @apiGroup Comments 
  * @apiError {404} NOTFOUND no comments on this subject
@@ -52,7 +52,7 @@ Router.get('/list', async (req, res) => {
  * {
  * "AddedCommentSuc": true
  * }
- * @api{POST}/comment/create Create a comment
+ * @api{POST} /api/comments/create Create a comment
  * @apiName creatComment
  * @apiGroup Comments
  * @apiParam{String} Body The body of the comment  

@@ -8,7 +8,7 @@ const Author= require('../models/Author.model');
          
  //Find Author by Name 
  /**
- * @api{GET}/api/Author/?auth_name=Value Find an author by name
+ * @api{GET}/api/authors/name Find an author by name
  * @apiName Find author by name 
  * @apiGroup Author 
  * @apiError {404} name-not-found Author could not be found
@@ -40,7 +40,7 @@ const Author= require('../models/Author.model');
 
 
 
-router.get('/', async (req,res) => {
+router.get('/name', async (req,res) => {
 
     /*
     console.log(req.params);
@@ -74,7 +74,7 @@ router.get('/', async (req,res) => {
     /***************************
     //Get info about author by id 
    /**
-   * @api{GET}/api/Author/byid/?auth_id=Value Get info about author by id 
+   * @api{GET}/api/author/id Get info about author by id 
    * @apiName Get info about author by id 
    * @apiGroup Author 
    * @apiError {404} id-not-found Author could not be found
@@ -106,7 +106,7 @@ router.get('/', async (req,res) => {
   
   
   
-   router.get('/byid', async (req,res) => {
+   router.get('/id', async (req,res) => {
   
     /*
     console.log(req.params);
@@ -142,7 +142,7 @@ router.get('/', async (req,res) => {
     //UNFollow Author
    /**
    * 
-   * @api {POST}  /api/Authors/unFollow Unfollow an Author
+   * @api {POST}  /api/authors/unfollow Unfollow an Author
    * @apiName Unfollow Author
    * @apiGroup Author
    * @apiError {404} id-not-found The<code>myuserId</code> was not found.
@@ -168,7 +168,7 @@ router.get('/', async (req,res) => {
    */
   
    //UNFollow Author
-   router.post('/unFollow', async (req, res) => { //sends post request to /Authors/unFollow End point through the router
+   router.post('/unfollow', async (req, res) => { //sends post request to /Authors/unFollow End point through the router
     /* console.log(req.body.auth_id);
     console.log(req.auth_id);
     console.log(req.params.auth_id);
@@ -214,7 +214,7 @@ router.get('/', async (req,res) => {
           //Follow Author
    /**
    * 
-   * @api {POST}  /api/Authors/Follow follow an Author
+   * @api {POST}  /api/authors/follow follow an Author
    * @apiName follow Author
    * @apiGroup Author
    * @apiError {404} id-not-found The<code>myuserId</code> was not found.
@@ -238,7 +238,7 @@ router.get('/', async (req,res) => {
    */
   
    //Follow Author
-   router.post('/Follow', async (req, res) => { //sends post request to /Authors/Follow End point through the router
+   router.post('/follow', async (req, res) => { //sends post request to /Authors/Follow End point through the router
     /* console.log(req.body.auth_id);
     console.log(req.auth_id);
     console.log(req.params.auth_id);*/
