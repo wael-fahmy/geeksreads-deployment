@@ -32,7 +32,8 @@ var allowCrossDomain = function(req, res, next) {
       next();
     }
 };
-
+var cors=require('cors');
+app.use(cors());
   app.use(allowCrossDomain);
  // app.use(express.bodyParser());
   //app.use(express.methodOverride());
