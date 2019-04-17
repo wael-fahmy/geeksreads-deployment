@@ -33,12 +33,12 @@ var allowCrossDomain = function(req, res, next) {
     }
 };
 
-  app.use(allowCrossDomain);
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
+ // app.use(allowCrossDomain);
+ // app.use(express.bodyParser());
+  //app.use(express.methodOverride());
+  //app.use(app.router);
   app.use(express.static('static'));
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  //app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 
 
