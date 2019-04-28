@@ -70,7 +70,7 @@ const Author= require('../models/Author.model');
  *
  */
 
-router.post('/me', auth, async (req, res) => {
+router.all('/me', auth, async (req, res) => {
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const user = await User.findById(req.user._id).select('-UserPassword  -_id  -__v ');
@@ -127,7 +127,7 @@ router.post('/me', auth, async (req, res) => {
  *
  */
 
-router.post('/update', auth, async (req, res) => {
+router.all('/update', auth, async (req, res) => {
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const { error } = DateValidate(req.body);
@@ -471,7 +471,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 
- router.get('/GetBookReadStatus', auth, async (req, res) => {
+ router.all('/GetBookReadStatus', auth, async (req, res) => {
    let check = await User.findOne({ UserId: req.user._id });
    if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
    let Read =  await User.findOne({ UserId: req.user._id, Read:req.body.BookId });
@@ -544,7 +544,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
   */
 
 
-  router.get('/GetUserShelves', auth, async (req, res) => {
+  router.all('/GetUserShelves', auth, async (req, res) => {
     let check = await User.findOne({ UserId: req.user._id });
     if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -606,7 +606,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
    */
 
 
-   router.get('/ShelvesCount', auth, async (req, res) => {
+   router.all('/ShelvesCount', auth, async (req, res) => {
      let check = await User.findOne({ UserId: req.user._id });
      if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -713,7 +713,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 
-  router.get('/GetUserShelvesDetails', auth, async (req, res) => {
+  router.all('/GetUserShelvesDetails', auth, async (req, res) => {
     let check = await User.findOne({ UserId: req.user._id });
     if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -872,7 +872,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 
-    router.get('/GetUserReadDetails', auth, async (req, res) => {
+    router.all('/GetUserReadDetails', auth, async (req, res) => {
       let check = await User.findOne({ UserId: req.user._id });
       if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -990,7 +990,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 
-      router.get('/GetUserReadingDetails', auth, async (req, res) => {
+      router.all('/GetUserReadingDetails', auth, async (req, res) => {
         let check = await User.findOne({ UserId: req.user._id });
         if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -1108,7 +1108,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 
-        router.get('/GetUserWantToReadDetails', auth, async (req, res) => {
+        router.all('/GetUserWantToReadDetails', auth, async (req, res) => {
           let check = await User.findOne({ UserId: req.user._id });
           if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
 
@@ -1493,7 +1493,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
     console.log(req.params.userId_tobefollowed);
     console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserid);*/
-      mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+     await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
 
         {
             UserId :  req.query.userId_tobefollowed //access document of user i want to unfollow
@@ -1518,7 +1518,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
            "Message":"Sucessfully done"});
         }
       });
-      mongoose.connection.collection("users").updateOne(
+     await mongoose.connection.collection("users").updateOne(
           {
               UserId :req.query.myuserid//access document of currently logged In user
           },

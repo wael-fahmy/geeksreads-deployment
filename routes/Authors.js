@@ -244,7 +244,7 @@ router.get('/name', async (req,res) => {
     console.log(req.params.auth_id);*/
    // console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     //console.log("my"+req.query.myuserId);
-      mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
+      await mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
     
         {
             AuthorId :  req.query.auth_id //access document of Author I want to follow
@@ -269,7 +269,7 @@ router.get('/name', async (req,res) => {
            "Message":"Sucessfully done"});
         }
       });
-      mongoose.connection.collection("Users").updateOne(
+      await mongoose.connection.collection("Users").updateOne(
           {
               UserId :req.query.myuserId//access document of currently logged In user 
           },
