@@ -264,7 +264,7 @@ let transporter = nodeMailer.createTransport({
      from: 'no-reply@codemoto.io',
 to: user.UserEmail,
 subject: 'Account Verification Token',
-text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/verify\/'+ token +'.\n' };
+text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '/api/users/verify/'+ token +'.\n' };
 let info = await transporter.sendMail(mailOptions);
 transporter.sendMail(mailOptions, (error, info) => {
           if (error) {

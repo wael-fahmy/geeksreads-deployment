@@ -1,15 +1,17 @@
 ///////////////////Required Modules//////////////////////////
 var express = require('express');
+const {CreatStatuses,CreatNotification} = require('../routes/Statuses');
 var Router = express.Router();
 const mongoose = require('mongoose');
 const {validate,comment} = require('../models/comments.model');
 const user = require("../models/User").User;
+const {review} = require("../models/reviews.model");
 const resource =mongoose.model('Resources');
 const Joi = require('joi');
 ///////////////////Req and Res Logic////////////////////////
 ////get////
 /**
- * @api{GET} /api/comments/list List comments on a subject 
+ * @api{GET}/comment.json List comments on a subject 
  * @apiName listCommentsOnSubject
  * @apiGroup Comments 
  * @apiError {404} NOTFOUND no comments on this subject
@@ -26,14 +28,16 @@ const Joi = require('joi');
  *           "body": "Hello World !",
  *           "userName": "zzzdwsdsdsdsd zzzdwsdsdsdsd",
  *           "userId": "567890987654567890",
- *           "Photo": "url",
  *           "date": "2019-01-02T09:00:16.204Z"
  *         },......
  * ]
  * }
- * @apiParam{Number} ReviewId Id of review given as type Parameter
+ * @apiParam{String} type Subject Type Commented On; book,review,etc
+ * @apiParam{Number} ID Id of resource given as type Parameter
+ * @apiParam{Number} perPage Number of comments per page default is <code>20</code>
+ * @apiParam{Number} pageNumber Number of current page default is <code>1</code>
  */
-Router.get('/list', async (req, res) => {
+Router.get('/', async (req, res) => {
     const { error } = validateget(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -44,6 +48,7 @@ Router.get('/list', async (req, res) => {
   
       
 });
+
 ////post////
 /**
  * @apiSuccess  {Boolean} AddedCommentSuc comment was added successfully
@@ -52,23 +57,18 @@ Router.get('/list', async (req, res) => {
  * {
  * "AddedCommentSuc": true
  * }
- * @api{POST} /api/comments/create Create a comment
+ * @api{POST}/comment.json Create a comment
  * @apiName creatComment
  * @apiGroup Comments
  * @apiParam{String} Body The body of the comment  
- * @apiParam{String} type Subject Type Commented On; book,review,etc
- * @apiParam{Number} BookId  id of book commented on
- * @apiParam{Number} ReviewId  id review commented on
- * @apiParam{Number} CommentId  id of comment
- * @apiParam{String} userName Name of user who wrote the comment
+ * @apiParam{ObjectID} reviewId   Id of resource given as type Parameter
+ * @apiParam{ObjectID} BookId   Id of resource given as type Parameter
  * @apiParam{Number} userID  Id of user who wrote the comment
- * @apiParam{String} Photo User Photo 
  * @apiParam{datePicker} date the date the comment was written on
- * @apiParam{Number} LikesCount number of likes on this comment
  * @apiError EmptyComment Must Have At Least <code>1</code> Character In Comment
  */
 
-Router.post('/create', async (req, res) => {
+Router.post('/', async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     var comment1 = new comment();
@@ -86,26 +86,41 @@ Router.post('/create', async (req, res) => {
     comment1.CommentId=comment1._id;  //7
     comment1.Photo= user1.Photo; //8
     comment1.LikesCount= 0; //9
+    comment1.liked= false;
     console.log(user1.UserName);
     console.log(user1.UserId);
     console.log(comment1);
     comment1.save((err, doc) => {
         if (!err) {           
             
+        /*     // review.findOne({reviewId :req.body.ReviewId},(err,doc)=>
+            // {
+            //     console.log(doc);
+            //      if(doc)
+            //     {
+            //         var NotifiedUserId = doc.userI
+            //         console.log(doc.userId); 
+
+            //      CreatNotification(NotifiedUserId,req.body.ReviewId,comment1.CommentId,"Comment", comment1.userId,null);
+            //     }
+ */
+         //   });
             res.json({ "AddedCommentSuc": true });
-        }
-        else {
+    
+        }   
+            else {
             res.json({ "AddedCommentSuc": false });
             console.log('error during log insertion: ' + err);
         }
     });
 });
+
+/////////////////////////////////////////
 function validateget(reqin) {
     const schema = {
     ReviewId:Joi.string().min(24),
     };
     return Joi.validate(reqin, schema);
     }
-
-
+/////////////////////////////////////////
 module.exports = Router;
