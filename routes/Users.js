@@ -78,13 +78,13 @@ router.all('/me', auth, async (req, res) => {
   var NoOfFollowings = user.FollowingUserId.length;
   var NoOfFollowers = user.FollowersUserId.length;
   var Result={
-    "NoOfFollowing":NoOfFollowings,
+    "NoOfFollowings":NoOfFollowings,
     "NoOfFollowers":NoOfFollowers,
     "UserEmail":user.UserEmail,
     "UserName":user.UserName,
     "Photo":user.Photo
   }
-  res.status(200).send(user);
+  res.status(200).send(Result);
 });
 
 
