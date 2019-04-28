@@ -40,7 +40,7 @@ const Author= require('../models/Author.model');
 
 
 
-router.get('/', async (req,res) => {
+router.get('/name', async (req,res) => {
 
     /*
     console.log(req.params);
