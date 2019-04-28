@@ -182,9 +182,8 @@ router.post('/update', auth, async (req, res) => {
 
 
 router.get('/verify/:token', authAll, async (req, res) => {
-  let check = await User.findOne({ UserId: req.user._id });
+  let check = await User.findOne({ UserEmail: req.user.UserEmail });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
-  const user = await User.findById(req.user._id).select('-UserPassword');
   const user = await User.findOne({UserEmail: req.user.UserEmail }).select('-UserPassword');
   user.Confirmed = true;
   user.save();
