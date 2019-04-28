@@ -75,6 +75,15 @@ router.all('/me', auth, async (req, res) => {
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const user = await User.findById(req.user._id).select('-UserPassword  -_id  -__v ');
   if (!user.Confirmed) return res.status(401).send({  "ReturnMsg" : 'Your account has not been verified.' });
+  var NoOfFollowings = user.FollowingUserId.length;
+  var NoOfFollowers = user.FollowersUserId.length;
+  var Result={
+    "NoOfFollowing":NoOfFollowings,
+    "NoOfFollowers":NoOfFollowers,
+    "UserEmail":user.UserEmail,
+    "UserName":user.UserName,
+    "Photo":user.Photo
+  }
   res.status(200).send(user);
 });
 
