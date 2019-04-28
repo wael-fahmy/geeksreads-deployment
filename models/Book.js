@@ -44,7 +44,7 @@ const BookSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  ISBN:{
+  Isbn:{
     type: String,
     unique: true
   },
@@ -57,7 +57,7 @@ const BookSchema = new mongoose.Schema({
 
 
 const Book = mongoose.model('Book', BookSchema);
-function validateBook(Books) {
+function validateBook(Book) {
 const schema = {
 Title: Joi.string().min(3).max(50).required(),
 Cover: Joi.string(),
@@ -65,15 +65,14 @@ ReadStatus: Joi.string(),
 Publisher: Joi.string(),
 Published: Joi.Date(),
 Description: Joi.string().min(1).max(1024),
-Store: Joi.string(),
 Pages: Joi.Number(),
 BookId: Joi.string().required(),
 AuthorId: Joi.string().required(),
-ISBN: Joi.string().required(),
+Isbn: Joi.string().required(),
 Genre: Joi.string().min(3).max(50)
 };
-return Joi.validate(Books, schema);
+return Joi.validate(Book, schema);
 }
-exports.Books = Book;
+exports.Book = Book;
 exports.validate= validateBook;
 

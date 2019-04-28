@@ -1,14 +1,17 @@
+const config = require('config');
+const crypto = require('crypto');
+const auth = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
+const {Book,validate} = require('../models/Book');
 const mongoose = require('mongoose');
 const express = require('express');
-const {Books,validate} = require('../models/Book');
-const Author= require('../models/Author.model');
-const auth = require('../middleware/auth');
-const Joi = require('joi');
 const router = express.Router();
 
 //Find book by ID.
 /**
- * @api {GET} /api/Book/byid/?book_id=Value Find book by BookId
+ * @api {GET} /api/books/id Find book by BookId
  * @apiVersion 0.0.0
  * @apiName GetBook
  * @apiGroup Books
@@ -50,18 +53,18 @@ const router = express.Router();
  * @apiError Book-not-found   The <code>Book</code> was not found.
  */
 
-router.get('/byid', async (req,res) => {
+router.get('/id', async (req,res) => {
   
         
       
-   mongoose.connection.collection("books").findOne({'BookId':req.query.BookId},
+   mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
    (err,doc) =>{
     
      if(!doc || err)
      {
        res.status(404).json({  // sends a json with 404 code
          success: false ,  // book not retrieved  
-          "Message":"Book ID not  found for /byid!"});
+          "Message":"Book ID not  found !"});
      }
       else
       {
@@ -75,7 +78,7 @@ router.get('/byid', async (req,res) => {
 
 //Find book by title, author, or ISBN.
 /**
- * @api {GET} /book/find Find book by title, author, or ISBN. Gets found book
+ * @api {GET} /api/books/find Find book by title, authorID, or ISBN. Gets found book
  * @apiVersion 0.0.0
  * @apiName FindBooks
  * @apiGroup Books
@@ -165,7 +168,7 @@ router.get("/find",(req,res)=>
 //Get reviews from book by id 
 /**
  * 
- * @api {GET} /api/Book/reviewbyid/?book_id=Value Get book reviews by id 
+ * @api {GET} /api/books/reviews Get book reviews by id 
  * @apiName GetReviewsbyBookId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -197,11 +200,11 @@ router.get("/find",(req,res)=>
  */
 
 
-    router.get('/reviewbyid', async (req,res) => {
+    router.get('/reviews', async (req,res) => {
   
-        
+        //get reviews enta kda btrg3 books brdo ya sameh
       
-        mongoose.connection.collection("Reviews").findOne({bookId:req.query.book_id},
+        mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
         (err,doc) =>{
          
           if(!doc || err)
@@ -220,84 +223,10 @@ router.get("/find",(req,res)=>
       
         )}); 
 
-//Get reviews from book by isbn 
-/**
- * 
- * @api {GET} /api/Book/reviewbyisbn/?book_isbn=Value Get book reviews by id 
- * @apiName GetReviewsbyBookId
- * @apiGroup Books
- * @apiVersion  0.0.0
- * 
- * 
- * @apiParam  {string} isbn Book ISBN.
- * @apiParam {number} [rating=0] Limit reviews to a particular rating or above,(default is 0).
- * 
- * @apiSuccess {string} UserId User-ID.
- * @apiSuccess {string} BookId Book-ID.
- * @apiSuccess {string} ReviewId Review-ID.
- * @apiSuccess {string} ReviewBody The text for the review entered by user.
- * @apiSuccess {DatePicker} ReviewDate Date where review was entered by user.
- * @apiSuccess {Number}   ReviewRating       Rating for the review.
- * 
- * @apiSuccessExample {json} Success
- *     HTTP/1.1 200 OK
- *     {
- *          "ReviewId":"5c9243a5beb4101160e23fdd",
- *          "BookId":"5c9114a012d11bb226399497",
- *          "UserId":"5c9132dd47cb909f7fbbe875",
- *          "ReviewRating":5.0,
- *          "ReviewBody":"Mollit tempor consequat magna officia occaecat laborum duis consequat qui sunt ipsum. Commodo cillum voluptate incididunt mollit non non voluptate cillum id magna qui laborum ullamco adipisicing. Dolore consequat fugiat ut Lorem incididunt ea dolore voluptate aliquip. Reprehenderit duis est do ad consequat ad enim pariatur ad Lorem Lorem enim officia exercitation. Magna ea ipsum laborum sint est.\r\n",
- *          "ReviewDate":" 2015-12-03T02:44:27 -02:00"
- *          
- *     }
- * 
- * @apiError Book-Not-Found The <code>Book</code> was not found
- */
-router.get('/reviewbyisbn', async (req,res) => {
-  
- 
-  mongoose.connection.collection("books").findOne({ISBN:req.query.book_isbn},
-  (err,doc) =>{
-   
-    if(!doc || err)
-    {
-      res.status(404).json({  // sends a json with 404 code
-        success: false ,  // book not retrieved  
-         "Message":"Book ISBN not  found !"});
-    }
-     else
-     {
-        book_id  = doc.BookId;
-       mongoose.connection.collection("Reviews").findOne({bookId:req.query.book_id},
-        (err,doc2) =>{
-         
-          if(!doc2 || err)
-          {
-            res.status(404).json({  // sends a json with 404 code
-              success: false ,  // book not retrieved  
-               "Message":"Book ID not  found !"});
-          }
-           else
-           {
-           res.status(200).json(doc2);
-          
-           }
-          }
-      
-      
-        )
-     }
-    }
-
-
-  )}); 
-
-
-
         //convert isbns to ids
         /**
  * 
- * @api {get} /api/Book/byisbn/?book_isbn=Value Get Geeksreads book IDs given ISBNs
+ * @api {get} /api/books/isbn Get Geeksreads book IDs given ISBNs
  * @apiName IsbntoId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -316,10 +245,10 @@ router.get('/reviewbyisbn', async (req,res) => {
  * @apiError Books-Not-Found Some or all of the ISBNs entered are not valid.
  */
 
-router.get('/byisbn', async (req,res) => {
+router.get('/isbn', async (req,res) => {
   
  
-   mongoose.connection.collection("books").findOne({ISBN:req.query.book_isbn},
+   mongoose.connection.collection("Books").findOne({BookIsbn:req.query.book_isbn},
    (err,doc) =>{
     
      if(!doc || err)
@@ -330,7 +259,7 @@ router.get('/byisbn', async (req,res) => {
      }
       else
       {
-      res.status(200).json(doc.BookId);
+      res.status(200).json(doc);
      
       }
      }
@@ -340,13 +269,13 @@ router.get('/byisbn', async (req,res) => {
 
        
 /**
- * @api {GET} /book/bygenre Find all books with the same Genre
+ * @api {GET} /api/books/genre Find all books with the same Genre
  * @apiVersion 0.0.0
  * @apiName GetBooksByGerne
  * @apiGroup Books
  *
  *
- * @apiParam  {string} Genre the specfic Genre
+ * @apiParam  {string} Genre the specfic Genre name
  *
  * @apiSuccess {String} BookId         Book-ID.
  * @apiSuccess {String} Title         Book-Title.
@@ -402,52 +331,24 @@ router.get('/byisbn', async (req,res) => {
  *
  * @apiError genre-not-found   The <code>genre</code> was not found.
  */
-router.get('/bygenre', async (req,res) => {
-  
-        
-      
-  mongoose.connection.collection("books").findOne({'Genre':req.query.Genre},
-  (err,doc) =>{
-   
-    if(!doc || err)
-    {
-      res.status(404).json({  // sends a json with 404 code
-        success: false ,  // book not retrieved  
-        "Message":"No books with this Genre was Found"});
-    }
-     else
-     {
-     res.status(200).json(doc);
-    
-     }
-    }
-
-
-  )}); 
-
-  /*router.get('/bygenre', async (req,res) => {
-  
-        
-      
-    Books.find({"Genre" : req.body.Genre}).then
-    (bookArr =>{
-     
-      if(bookArr.length==0)
+router.get('/genre', async (req,res) => {
+  if (!req.query.Genre)
+  {
+    res.status(400).send("Bad request no genre")
+  }
+  mongoose.connection.collection("Books").find({Genre:req.query.Genre},
+    (err,doc) =>{ 
+      if (!doc)
       {
-        res.status(404).json({  // sends a json with 404 code
-          success: false ,  // book not retrieved  
-          "Message":"No books with this Genre was Found"});
-        }
-       else
-       {
-       res.status(200).json(doc);
-      
-       }
-      }).catch(err => res.status(404).json({ success: false }));
-  
-  
-    });*/ 
- 
-  
+        res.status(404).send("No books with this Gerne was Found")
+      }
+      else 
+      {
+        res.status(200).send(doc);
+      }
 
+    });
+  });
+  
+ 
 module.exports = router;

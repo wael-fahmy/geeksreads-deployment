@@ -14,7 +14,7 @@ const router = express.Router();
 
 /**
  *
- * @api {POST}  /user/SignIn/ Signing in by Email and Password
+ * @api {POST}  /api/auth/signin Signing in by Email and Password
  * @apiName SignIn
  * @apiGroup User
  *
@@ -44,11 +44,11 @@ const router = express.Router();
  *
  */
 
-router.post('/', async (req, res) => {
+router.post('/signin', async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
 
-  let user = await User.findOne({ UserEmail: req.body.UserEmail.toLowerCase() });
+  let user = await User.findOne({ UserEmail: req.body.UserEmail });
   if (!user) return res.status(400).send({"ReturnMsg":"Invalid email or password."});
   if (!user.Confirmed) return res.status(401).send({ "ReturnMsg" :'Your account has not been verified.' });
   const validPassword = await bcrypt.compare(req.body.UserPassword, user.UserPassword);

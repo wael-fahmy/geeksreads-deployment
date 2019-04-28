@@ -6,7 +6,7 @@ const {review} = require('../models/reviews.model');
 const {comment}=require('../models/comments.model');
 const router = express.Router();
 /**
- * @api {Post} /like Like a resource 
+ * @api {Post} /api/resources/like Like a resource 
  * @apiName PutLike
  * @apiGroup Resources
  * @apiError {404} NOTFOUND Resource could not be found
@@ -58,7 +58,7 @@ router.post('/like',(req,res)=>{
 }
    else if (req.body.Type == "Review")
     {
-       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { likesCount: 1 } },function(err, doc){
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: 1 } },function(err, doc){
            if(err){
                console.log("Something wrong when updating data!");
            }
@@ -88,7 +88,7 @@ router.post('/like',(req,res)=>{
 /////Unlike a Resource/////
 
 /**
- * @api {PUT} /unlike Unlike a resource 
+ * @api {PUT} /api/resources/unlike Unlike a resource 
  * @apiName PutUnlike
  * @apiGroup  Resources
  * @apiError {404} NOTFOUND Resource could not be found
@@ -101,7 +101,7 @@ router.post('/like',(req,res)=>{
  * 
  */
 
-router.post('/unlike',(req,res)=>{
+router.post('/like',(req,res)=>{
 
     // input validation
     console.log(req.body.resourceId);
@@ -130,14 +130,14 @@ router.post('/unlike',(req,res)=>{
         }
         if (doc)
         {
-            return res.status(200).send("unliked");
+            return res.status(200).send("liked");
        
         }
     });
 }
    else if (req.body.Type == "Review")
     {
-       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { likesCount: -1 } },function(err, doc){
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: -1 } },function(err, doc){
            if(err){
                console.log("Something wrong when updating data!");
            }
@@ -149,7 +149,7 @@ router.post('/unlike',(req,res)=>{
            }
            if (doc)
            {
-               return res.status(200).send("unliked");
+               return res.status(200).send("liked");
           
            }
        });
