@@ -180,7 +180,7 @@ router.post('/update', auth, async (req, res) => {
  */
 
 
-router.post('/verify/:token', auth, async (req, res) => {
+router.post('/verify/:token', authAll, async (req, res) => {
 
   let check = await User.findOne({ UserEmail: req.user.UserEmail });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
