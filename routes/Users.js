@@ -70,7 +70,7 @@ const Author= require('../models/Author.model');
  *
  */
 
-router.get('/me', auth, async (req, res) => {
+router.post('/me', auth, async (req, res) => {
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const user = await User.findById(req.user._id).select('-UserPassword  -_id  -__v ');
