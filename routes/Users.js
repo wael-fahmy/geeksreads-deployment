@@ -82,7 +82,35 @@ router.all('/me', auth, async (req, res) => {
     "NoOfFollowers":NoOfFollowers,
     "UserEmail":user.UserEmail,
     "UserName":user.UserName,
-    "Photo":user.Photo
+    "Photo":user.Photo,
+    "UserBirthDate":user.UserBirthDate
+  }
+  res.status(200).send(Result);
+});
+
+
+
+
+router.all('/GetUserById', auth, async (req, res) => {
+  let check = await User.findOne({ UserId: req.user._id });
+  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+  const userdisplay = await User.findById(req.body.UserId).select('-UserPassword  -_id  -__v ');
+  const user = await User.findById(req.user._id).select('-UserPassword  -_id  -__v ');
+  if (!user.Confirmed) return res.status(401).send({  "ReturnMsg" : 'Your account has not been verified.' });
+  var NoOfFollowings = userdisplay.FollowingUserId.length;
+  var NoOfFollowers = userdisplay.FollowersUserId.length;
+  var x; 
+  let finding = await User.findOne({ UserId: req.user._id, FollowingUserId:req.body.UserId  });
+  if (finding) x= "True"; 
+  if(!finding) x= "False";
+  var Result={
+    "NoOfFollowings":NoOfFollowings,
+    "NoOfFollowers":NoOfFollowers,
+    "UserEmail":userdisplay.UserEmail,
+    "UserName":userdisplay.UserName,
+    "Photo":userdisplay.Photo,
+    "UserBirthDate":userdisplay.UserBirthDate,
+    "IsFollowing":x
   }
   res.status(200).send(Result);
 });
