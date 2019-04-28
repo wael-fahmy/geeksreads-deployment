@@ -25,7 +25,7 @@ const StatusesSchema = new mongoose.Schema({
       {
         type: String
       },
-      MakerPhoto:
+    MakerPhoto:
       {
         type: String//url
       },
@@ -81,6 +81,7 @@ const StatusesSchema = new mongoose.Schema({
     {
         type: String
     },
+    
     
     NumberOfStars:// for rating
     {

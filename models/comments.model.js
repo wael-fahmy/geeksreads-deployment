@@ -29,6 +29,10 @@
      },
      LikesCount: {
         type: Number //9 /done
+        , minimum:0
+    }
+    ,liked:{
+        type: Boolean //10 /done
     }
 });
 //const comment = mongoose.model('comment', UserSchema);

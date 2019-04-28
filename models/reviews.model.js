@@ -20,6 +20,10 @@ var reviewSchema = new mongoose.Schema({
     }
     , bookId: {
         type: ObjectId//2 /done
+    },
+    liked:
+    {
+        type: Boolean
     }
     ,
     rating: {
@@ -53,12 +57,12 @@ var reviewSchema = new mongoose.Schema({
     },
     likesCount: {
        type: Number //10 /done
+       , minimum:0
    }
 });
 review=mongoose.model('review', reviewSchema);
 function validateReview(Review) {
     const schema = {
-    rating: Joi.number().min(0).max(5),
     reviewBody: Joi.string().min(6).max(255).required(),
     reviewDate: Joi.date().iso(),
     shelf: Joi.string(),

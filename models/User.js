@@ -2,7 +2,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const mongoose = require('mongoose');
-
+ObjectId = mongoose.Schema.Types.ObjectId;
 const UserSchema = new mongoose.Schema({
   UserName: {
     type: String,
@@ -58,6 +58,33 @@ const UserSchema = new mongoose.Schema({
       type:String
     }
   },
+  LikedComment:{
+    type:"array",
+    "items":{
+      type:String
+    }
+  },
+  LikedReview:{
+    type:"array",
+    "items":{
+      type:String
+    }
+  },
+  RatedBooks:[{
+    bookId:{
+      type:ObjectId
+    },
+    rating:{
+      type:Number
+    }
+  }]
+  /*{
+    type:"array",
+    "items":{
+      type:String
+    }
+  }*/
+  ,
   Read:{
     type:"array",
     "items":{
@@ -87,7 +114,7 @@ const UserSchema = new mongoose.Schema({
   });
 
 UserSchema.methods.generateAuthToken = function() {
-  const token = jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'));
+  const token = jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'), {expiresIn: '1d'});
   return token;
 }
 const User = mongoose.model('User', UserSchema);
@@ -99,14 +126,23 @@ UserPassword: Joi.string().min(6).max(255).required()
 };
 return Joi.validate(User, schema);
 }
+function validateNewPassword(User) {
+const schema = {
+OldUserPassword: Joi.string().min(6).max(255).required(),
+NewUserPassword: Joi.string().min(6).max(255).required()
+};
+return Joi.validate(User, schema);
+}
+
 function validateDate(User) {
 const schema = {
 NewUserBirthDate: Joi.date(),
 NewUserName: Joi.string().min(3).max(50).required(),
-NewUserPhoto: Joi.string().min(0).max(1024)
+NewUserPhoto: Joi.string()
 };
 return Joi.validate(User, schema);
 }
 exports.User = User;
 exports.validate= validateUser;
 exports.DateValidate= validateDate;
+exports.NewPassWordValidate=  validateNewPassword;
