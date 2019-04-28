@@ -20,7 +20,11 @@ var AuthorSchema = new mongoose.Schema({
     }},
     Photo: {
         type: String
-    }
+    }, 
+    About:
+    {
+      type: String
+    } 
     });
 Authors= mongoose.model('Authors', AuthorSchema);
 exports.Authors =Authors ;

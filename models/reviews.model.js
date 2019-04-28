@@ -48,7 +48,7 @@ var reviewSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 50
     },
-    photo: {
+    photo: { // user photo
         type: String //9 /done
     },
     likesCount: {

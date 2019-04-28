@@ -25,7 +25,7 @@ const StatusesSchema = new mongoose.Schema({
       {
         type: String
       },
-      MakerPhoto:
+    MakerPhoto:
       {
         type: String//url
       },
