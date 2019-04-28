@@ -2,6 +2,7 @@ const config = require('config');
 const isImageUrl = require('is-image-url');
 const crypto = require('crypto');
 const auth = require('../middleware/auth');
+const authAll = require('../middleware/authAll');
 const jwt = require('jsonwebtoken');
 //const sendgrid = require('sendgrid');
 const bcrypt = require('bcrypt');
