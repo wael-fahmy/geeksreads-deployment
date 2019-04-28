@@ -57,7 +57,7 @@ router.get('/id', async (req,res) => {
   
         
       
-   mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
+   mongoose.connection.collection("books").findOne({BookId:req.query.book_id},
    (err,doc) =>{
     
      if(!doc || err)
@@ -204,7 +204,7 @@ router.get("/find",(req,res)=>
   
         //get reviews enta kda btrg3 books brdo ya sameh
       
-        mongoose.connection.collection("Books").findOne({BookId:req.query.book_id},
+        mongoose.connection.collection("books").findOne({BookId:req.query.book_id},
         (err,doc) =>{
          
           if(!doc || err)
@@ -248,7 +248,7 @@ router.get("/find",(req,res)=>
 router.get('/isbn', async (req,res) => {
   
  
-   mongoose.connection.collection("Books").findOne({BookIsbn:req.query.book_isbn},
+   mongoose.connection.collection("books").findOne({BookIsbn:req.query.book_isbn},
    (err,doc) =>{
     
      if(!doc || err)
@@ -336,7 +336,7 @@ router.get('/genre', async (req,res) => {
   {
     res.status(400).send("Bad request no genre")
   }
-  mongoose.connection.collection("Books").find({Genre:req.query.Genre},
+  mongoose.connection.collection("books").find({Genre:req.query.Genre},
     (err,doc) =>{ 
       if (!doc)
       {
