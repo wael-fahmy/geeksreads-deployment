@@ -36,11 +36,11 @@ const BookSchema = new mongoose.Schema({
   Pages:{
       type:Number
   },
-NoRating:{
+  RateCount:{
     type:Number,
     default: 0
 },
-NoReviews:{
+ReviewCount:{
   type:Number,
   default: 0
 },
@@ -88,8 +88,8 @@ BookId: Joi.string().required(),
 AuthorId: Joi.string().required(),
 AuthorName: Joi.string().required(),
 BookRating: Joi.Number(),
-NoRating: Joi.Number(),
-NoReviews: Joi.Number(),
+RateCount: Joi.Number(),
+ReviewCount: Joi.Number(),
 ISBN: Joi.string().required(),
 Genre: Joi.string().min(3).max(50)
 };
