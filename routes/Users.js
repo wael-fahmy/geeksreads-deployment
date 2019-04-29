@@ -1454,7 +1454,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 //Follow User
-router.post('/follow', async (req, res) => { //sends post request to /Follow End point through the router
+router.post('/follow', auth,async (req, res) => { //sends post request to /Follow End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
@@ -1524,7 +1524,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
  */
 
   //UNFollow User
-  router.post('/unfollow', async (req, res) => { //sends post request to /unFollow End point through the router
+  router.post('/unfollow', auth,async (req, res) => { //sends post request to /unFollow End point through the router
     /* console.log(req.body.userId_tobefollowed);
     console.log(req.userId_tobefollowed);
     console.log(req.params.userId_tobefollowed);
@@ -1566,7 +1566,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
 
           });
 
-  //Get User Notifications
+    //Get User Notifications
 
   /**
  * @api{Get} /User/Notifications Get User Status
@@ -1647,20 +1647,20 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
  */
 
 
-router.get("/Notifications" ,(req,res)=>
+router.all("/Notifications" ,auth ,async(req,res)=>
 {
-     if(req.query.UserId==null)
-     {
-        return  res.status(400).send("Bad request no UserID  Id is there");
-    }
+//      if(req.user._id==null)
+//      {
+//         return  res.status(400).send("Bad request no UserID  Id is there");
+//     }
 
-      if (req.query.UserId.length == 0)
-     {
-       return  res.status(400).send("Bad request no Satatus Id is there");
-     }
+//       if (req.user._id.length == 0)
+//      {
+//        return  res.status(400).send("Bad request no Satatus Id is there");
+//      }
 
 
-  Notification.find( {'UserId':req.query.UserId},(err,doc)=>
+  Notification.find( {'UserId':req.user._id},async (err,doc)=>
 
    {
     if(!doc)
@@ -1671,7 +1671,51 @@ router.get("/Notifications" ,(req,res)=>
     {
    return res.status(404).send("No Notifications were found");
     }
+      var n = doc.length;
+      console.log (n);
+      let Result = await User.find({'UserId': req.user._id}).select('-_id LikedReview WantToRead Reading Read');
+         console.log(Result);
+        
+      for (var i=0 ;i<n;i++)
+     {
+       if (doc[i].ReviewId)
+       {
+        console.log(doc[i].ReviewId);
+         var exsist = Result[0].LikedReview.indexOf(doc[i].ReviewId);
+         console.log(exsist);
 
+                 if (exsist>=0) {
+                 
+                   doc[i].ReviewIsLiked =true;  
+                   }
+                 else
+                  {
+                     doc[i].ReviewIsLiked =false;  
+                   }
+                  
+               if (doc[i].BookId) // in case of review thats mean we have book so we have to check is is reading or want to read ....     
+                   {
+                    var exsist = Result[0].WantToRead.indexOf(doc[i].BookId);
+                    if (exsist>=0) {doc[i].BookStatus ="WantToRead";}
+                    else
+                     {
+                      exsist = Result[0].Read.indexOf(doc[i].BookId);
+                      if (exsist>=0) {doc[i].BookStatus ="Read";}
+                      else
+                      {
+                        exsist = Result[0].Reading.indexOf(doc[i].BookId);
+                      if (exsist>=0) {doc[i].BookStatus ="Reading";}
+                      else{doc[i].BookStatus =null;}
+                      }
+                      }
+                    }
+  
+  
+   
+        }    
+    
+     }
+     
     res.status(200).send(
         doc
     )
@@ -1697,27 +1741,27 @@ router.get("/Notifications" ,(req,res)=>
  * @apiError Notification-Not-Found The <code>Notification</code> was not found
  *
   */
-router.post("/Notification/seen" ,(req,res)=>
+router.post("/Notification/seen" ,auth,(req,res)=>
 {
-     if(req.body.NotificationId==null)
+     if(req.query.NotificationId==null)
      {
-        return  res.status(400).send("Bad request no UserID  Id is there");
+        return  res.status(400).send("Bad request no .NotificationId  Id is there");
     }
 
-      if (req.body.NotificationId.length == 0)
+      if (req.query.NotificationId.length == 0)
      {
-       return  res.status(400).send("Bad request no Satatus Id is there");
+       return  res.status(400).send("Bad request .NotificationId Id is there");
      }
 
 
-  Notification.findOneAndUpdate( {'NotificationId':req.body.NotificationId},
+  Notification.findOneAndUpdate( {'NotificationId':req.query.NotificationId},
   { $set : {'Seen' :true} },
   (err,doc)=>
 
    {
     if(!doc)
     {
-   return res.status(404).send("No Notifications were found");
+    return res.status(404).send("No Notifications were found");
     }
     if(doc.lenght==0)
     {
@@ -1774,14 +1818,14 @@ router.post("/Notification/seen" ,(req,res)=>
 
 
 //Get people a user is following
-router.post('/getfollowing', async (req, res) => { //sends post request to /getfollowing End point through the router
+router.post('/getfollowing', auth,async (req, res) => { //sends post request to /getfollowers End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
     mongoose.connection.collection("users").findOne({UserId:req.query.user_id},
-      (err,doc) =>{
+      async (err,doc) =>{
 
       //  console.log(doc);
 
@@ -1795,7 +1839,17 @@ router.post('/getfollowing', async (req, res) => { //sends post request to /getf
          else
          {
          //console.log(doc);
-         res.status(200).json(doc.FollowingUserId);
+         FollowingUserId=doc.FollowingUserId;
+         var followingData = Array();
+         //console.log(FollowingUserId);
+         n=FollowingUserId.length;
+         for(i=0;i<n;i++)
+         {
+          let X= await User.findById(FollowingUserId[i]).select('-UserPassword');
+          followingData.push(X);
+         }
+         res.status(200).json(followingData);
+
 
          }
         });
@@ -1831,14 +1885,14 @@ router.post('/getfollowing', async (req, res) => { //sends post request to /getf
 
 
 //Get User's Followers
-router.post('/getfollowers', async (req, res) => { //sends post request to /getfollowers End point through the router
+router.post('/getfollowers', auth,async (req, res) => { //sends post request to /getfollowers End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
     mongoose.connection.collection("users").findOne({UserId:req.query.user_id},
-      (err,doc) =>{
+      async (err,doc) =>{
 
       //  console.log(doc);
 
@@ -1852,12 +1906,20 @@ router.post('/getfollowers', async (req, res) => { //sends post request to /getf
          else
          {
          //console.log(doc);
-         res.status(200).json(doc.FollowersUserId);
+         FollowersUserId=doc.FollowersUserId;
+         var FollowersData = Array();
+         n=FollowersUserId.length;
+         for(i=0;i<n;i++)
+         {
+          let X= await User.findById(FollowersUserId[i]).select('-UserPassword');
+          FollowersData.push(X);
+         }
+         res.status(200).json(FollowersData);
+
 
          }
         });
  });
-
 
 
 module.exports = router;

@@ -3,6 +3,10 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const {User} = require('../models/User');
+const {Books} =require('../models/Book');
+const {review} = require('../models/reviews.model');
+const {comment}=require('../models/comments.model');
 
 const StatusesSchema = new mongoose.Schema({
     StatusId: {
@@ -50,6 +54,10 @@ const StatusesSchema = new mongoose.Schema({
     ReviewLikesCount: {
         type: Number 
     },
+    ReviewIsLiked:
+    {
+      type: Boolean 
+    },
     //////////////////////////////////
     ////////////Comment//////////////
     CommentId:
@@ -67,6 +75,11 @@ const StatusesSchema = new mongoose.Schema({
     CommentLikesCount: {
         type: Number //9 /done
     },
+    
+    CommentIsLiked:
+    {
+      type: Boolean 
+    },
     ////////////////////////////////////////
     //////////BOook/////////////////////
     BookId:
@@ -82,7 +95,10 @@ const StatusesSchema = new mongoose.Schema({
         type: String
     },
     
-    
+    BookStatus: // Read WantToRead Reading 
+    {
+    type: String
+    },
     NumberOfStars:// for rating
     {
         type: Number
@@ -103,6 +119,145 @@ function validateStatuses(Status) {
     };
     return Joi.validate(Status, schema);
     }
-// Important Exports   
+    /**
+ * Creating new statuses.
+ * @constructor
+ * @param {string} FollowerId - the Id of the ppl who will see the statuses in his new feed.
+ * @param {string} MakerId- the id of the user who made the action.
+ * @param {string} ReviewId - the id of the review 
+ * @param {string} Comment1Id - the id of the comment
+ * @param {string} Type - the type of the statuses its one of three ( Rate, Review ,Comment) stick with the naming
+ * @param {string} Book1Id the Id of the book (review or rated)
+ * @param {string} NumberOfStars if rating must send number of stars
+ * 
+ */
+
+async function CreatStatuses( FollowerId ,ReviewId , Comment1Id, Type, MakerId, NumberOfStars, Book1Id )
+{
+// basic infos
+console.log(FollowerId ,ReviewId , Comment1Id, Type, MakerId, NumberOfStars, Book1Id);
+  var  newStatus = new Statuses(
+    {
+      "UserId":FollowerId,
+      "StatusType":Type, 
+      "CommentIsLiked" : false,
+      "ReviewIsLiked": false,
+      "BookStatus": null
+    });
+    newStatus.StatusId=newStatus._id;
+//get the Maker Infos//
+    await User.findOne({"UserId":MakerId},(err,doc )=>
+    {
+      if (!doc)
+      {
+        return console.log("Wrong Maker Id")
+      }
+      else{
+        newStatus.MakerId=doc.UserId;
+        newStatus.MakerPhoto=doc.Photo;
+        newStatus.MakerName =doc.UserName;    
+      }
+
+    });
+/////////////////////////////////////////
+//////// three types/////////////////
+//////////////////////////////////////////
+/////review//////
+if ( Type == "Review")
+{
+await review.findOne({"reviewId":ReviewId},(err,doc) =>
+{    
+    if (!doc)
+  {
+    return console.log("Wrong review Id")
+  }
+  else
+  {
+    newStatus.ReviewId=doc.reviewId;
+    newStatus.ReviewBody=doc.reviewBody;
+    newStatus.ReviewDate=doc.reviewDate;
+    newStatus.ReviewLikesCount= doc.likesCount;
+  
+  }
+
+});
+
+  await Books.findOne({"BookId":Book1Id},(err,doc) =>
+  {    
+      if (!doc)
+    {
+      return console.log("Wrong book Id")
+    }
+    else
+    {
+      newStatus.BookId=doc.BookId;
+      newStatus.BookName=doc.Title;
+      newStatus.BookPhoto=doc.Cover;    
+    }
+
+
+});
+}
+else if ( Type == "Rate")
+{
+  await Books.findOne({"BookId":Book1Id},(err,doc) =>
+  {    
+      if (!doc)
+    {
+      return console.log("Wrong book Id")
+    }
+    else{
+      newStatus.BookId=doc.BookId;
+      newStatus.BookName=doc.Title;
+      newStatus.BookPhoto=doc.Cover;    
+    }
+  });
+newStatus.NumberOfStars =NumberOfStars;
+
+}
+else // if comment
+{
+  
+await review.findOne({"reviewId":ReviewId},(err,doc) =>
+{    
+    if (!doc)
+  {
+    return console.log("Wrong review Id")
+  }
+  else
+  {
+    newStatus.ReviewId=doc.reviewId;
+    newStatus.ReviewBody=doc.reviewBody;
+    newStatus.ReviewDate=doc.reviewDate;
+    newStatus.ReviewLikesCount= doc.likesCount;
+  
+  }
+
+
+});
+
+await comment.findOne({CommentId:Comment1Id},(err,doc) =>
+{    
+    if (!doc)
+  {
+    return console.log("Wrong comment Id")
+  }
+  else
+  {
+    newStatus.CommentId=doc.CommentId;
+    newStatus.CommentBody=doc.Body;
+    newStatus.CommentDate=doc.date;
+    newStatus.CommentLikesCount= doc.likesCount;
+  
+  }
+});
+
+};
+
+newStatus.save();
+}
+
+// Important Exports 
+exports.CreatStatuses = CreatStatuses;
 exports.Status = Statuses;
 exports.validate = validateStatuses;

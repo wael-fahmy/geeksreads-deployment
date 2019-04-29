@@ -2,11 +2,15 @@
 const Joi = require('joi');
 const express = require('express');
 const mongoose= require ('mongoose');
+const user= require('../models/User').User;
 const {review} = require('../models/reviews.model');
 const {comment}=require('../models/comments.model');
+const{CreatNotification} = require('../models/Notifications');
+const {CreatStatuses} = require("../models/Statuses")
+
 const router = express.Router();
 /**
- * @api {Post} /api/resources/like Like a resource 
+ * @api {Post} /like Like a resource 
  * @apiName PutLike
  * @apiGroup Resources
  * @apiError {404} NOTFOUND Resource could not be found
@@ -21,7 +25,10 @@ const router = express.Router();
  *              "Liked": true
  *          }
  */
+/*
+    
 
+*/
 router.post('/like',(req,res)=>{
 
     // input validation
@@ -50,28 +57,79 @@ router.post('/like',(req,res)=>{
        
         }
         if (doc)
-        {
-            return res.status(200).send("liked");
+        {    
+            user.findByIdAndUpdate(req.body.User_Id,
+                { "$push": { "LikedComment": req.body.resourceId } },
+                function (err, user1) {
+                    if (!err) {           
+                        
+                   
+                        comment.findOne({"CommentId": req.body.resourceId},(err,doc)=>
+                        {
+                            //console.log(doc);
+                             if(doc)
+                            {
+                                var NotifiedUserId = doc.userId;
+                              //  console.log(doc.userId);
+                                var ReviewId = doc.reviewId;
+                                
+            
+                              CreatNotification (NotifiedUserId,ReviewId,req.body.resourceId,"CommentLike", req.body.User_Id,null);
+                      
+                            }
+                        });
+
+
+                    return res.status(200).send("liked");
+                   
+                   
+                    }
+                    else {
+                        return res.status(404).send("Not found");
+                        console.log('error during log insertion: ' + err);
+                    }});
        
         }
     });
 }
    else if (req.body.Type == "Review")
     {
-       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: 1 } },function(err, doc){
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { likesCount: 1 } },function(err, doc){
            if(err){
                console.log("Something wrong when updating data!");
            }
        
            if (!doc)
            {
+               console.log(req.body);
                return res.status(404).send("Not found");
           
            }
            if (doc)
            {
-               return res.status(200).send("liked");
-          
+            user.findByIdAndUpdate(req.body.User_Id,
+                { "$push": { "LikedReview": req.body.resourceId } },
+                function (err, user1) {
+                    if (!err) {           
+                        review.findOne({"reviewId": req.body.resourceId},(err,doc)=>
+            {
+                 
+                if(doc)
+                {
+                    var NotifiedUserId = doc.userId;
+                    var BookID = doc.bookId
+                 
+                  CreatNotification(NotifiedUserId, doc.reviewId, null,"ReviewLike", req.body.User_Id,BookID);
+                }
+ 
+            });
+           
+                        return res.status(200).send("liked");
+                    }
+                    else {
+                        return res.status(404).send("Not found");
+                        console.log('error during log insertion: ' + err);
+                    }});
            }
        });
     }          
@@ -88,7 +146,7 @@ router.post('/like',(req,res)=>{
 /////Unlike a Resource/////
 
 /**
- * @api {PUT} /api/resources/unlike Unlike a resource 
+ * @api {PUT} /unlike Unlike a resource 
  * @apiName PutUnlike
  * @apiGroup  Resources
  * @apiError {404} NOTFOUND Resource could not be found
@@ -101,7 +159,7 @@ router.post('/like',(req,res)=>{
  * 
  */
 
-router.post('/like',(req,res)=>{
+router.post('/unlike',(req,res)=>{
 
     // input validation
     console.log(req.body.resourceId);
@@ -130,14 +188,24 @@ router.post('/like',(req,res)=>{
         }
         if (doc)
         {
-            return res.status(200).send("liked");
-       
+            user.findByIdAndUpdate(req.body.User_Id,
+                { "$pull": { "LikedComment": req.body.resourceId } },
+                function (err, user1) {
+                    if (!err) {           
+                    
+                        
+                        return res.status(200).send("unliked");
+                    }
+                    else {
+                        return res.status(404).send("Not found");
+                        console.log('error during log insertion: ' + err);
+                    }});
         }
     });
 }
    else if (req.body.Type == "Review")
     {
-       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { LikesCount: -1 } },function(err, doc){
+       review.findOneAndUpdate({ reviewId: req.body.resourceId},{ $inc: { likesCount: -1 } },function(err, doc){
            if(err){
                console.log("Something wrong when updating data!");
            }
@@ -148,9 +216,18 @@ router.post('/like',(req,res)=>{
           
            }
            if (doc)
-           {
-               return res.status(200).send("liked");
-          
+           {user.findByIdAndUpdate(req.body.User_Id,
+            { "$pull": { "LikedReview": req.body.resourceId } },
+            function (err, user1) {
+                if (!err) {           
+                
+                    
+                    return res.status(200).send("unliked");
+                }
+                else {
+                    return res.status(404).send("Not found");
+                    console.log('error during log insertion: ' + err);
+                }});
            }
        });
     }          

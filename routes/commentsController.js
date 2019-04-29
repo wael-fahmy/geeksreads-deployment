@@ -1,6 +1,7 @@
 ///////////////////Required Modules//////////////////////////
 var express = require('express');
-const {CreatStatuses,CreatNotification} = require('../routes/Statuses');
+const{CreatNotification} = require('../models/Notifications');
+const {CreatStatuses} = require("../models/Statuses")
 var Router = express.Router();
 const mongoose = require('mongoose');
 const {validate,comment} = require('../models/comments.model');
@@ -37,7 +38,7 @@ const Joi = require('joi');
  * @apiParam{Number} perPage Number of comments per page default is <code>20</code>
  * @apiParam{Number} pageNumber Number of current page default is <code>1</code>
  */
-Router.get('/', async (req, res) => {
+Router.all('/list',async (req, res) => {
     const { error } = validateget(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -68,7 +69,7 @@ Router.get('/', async (req, res) => {
  * @apiError EmptyComment Must Have At Least <code>1</code> Character In Comment
  */
 
-Router.post('/', async (req, res) => {
+Router.post('/add',auth, async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     var comment1 = new comment();
@@ -77,6 +78,10 @@ Router.post('/', async (req, res) => {
     if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
     const user1 = await user.findById(req.body.userId);
     //////////////////////////////////////////////////////////////
+    let check1 = await review.findOne({ reviewId: req.body.ReviewId });
+    if (!check1) return res.status(400).send({"ReturnMsg":"review Doesn't Exist"});
+    const review1 = await review.findById(req.body.ReviewId);
+    /////////////////////////////////////////////////////////////
     comment1.Body = req.body.Body;//1
     comment1.userId=req.body.userId;//2
     comment1.userName = user1.UserName; //3
@@ -87,25 +92,41 @@ Router.post('/', async (req, res) => {
     comment1.Photo= user1.Photo; //8
     comment1.LikesCount= 0; //9
     comment1.liked= false;
-    console.log(user1.UserName);
+    /* console.log(user1.UserName);
     console.log(user1.UserId);
-    console.log(comment1);
+    console.log(comment1); */
     comment1.save((err, doc) => {
         if (!err) {           
-            
-        /*     // review.findOne({reviewId :req.body.ReviewId},(err,doc)=>
-            // {
-            //     console.log(doc);
-            //      if(doc)
-            //     {
-            //         var NotifiedUserId = doc.userI
-            //         console.log(doc.userId); 
+            review.findOneAndUpdate({"reviewId":req.body.ReviewId},{$inc:{commCount:1}},function (err, user1) {
+                if (!err) {
+                    review.findOne({"reviewId": req.body.ReviewId},(err,doc)=>
+            {
+                console.log(doc);
+                 if(doc)
+                {
+                    var NotifiedUserId = doc.userId;
+                    console.log(doc.userId); 
 
-            //      CreatNotification(NotifiedUserId,req.body.ReviewId,comment1.CommentId,"Comment", comment1.userId,null);
-            //     }
- */
-         //   });
-            res.json({ "AddedCommentSuc": true });
+                  CreatNotification(NotifiedUserId,req.body.ReviewId,comment1.CommentId,"Comment", comment1.userId,null);
+                  var n = user1.FollowersUserId.length;  
+                  for (i=0;i<n;i++)
+                  {
+                  CreatStatuses(user1.FollowersUserId[i],req.body.ReviewId,comment1.CommentId,"Comment",comment1.userId,null,null);
+                  }               
+                }
+
+ 
+            });             
+                    return res.status(200).send({ "AddedCommentSuc": true });
+                }
+                else {
+                    return res.status(404).send("Not found");
+                    console.log('error during log insertion: ' + err);}
+            });
+        
+  //  console.log(user1.UserName);
+   // console.log(user1.UserId);
+    //console.log(comment1);
     
         }   
             else {

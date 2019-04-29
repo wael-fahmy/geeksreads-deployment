@@ -125,50 +125,69 @@ router.get('/id', async (req,res) => {
  * @apiError Author-not-found   The <code>Author</code> was not found.
  */
 
-router.get("/find",(req,res)=>
-{
-     if(req.body.AuthorId!=null)
-     {
-        field = 'AuthorId';
-        given = req.body.AuthorId;
-    }
+router.get('/find', async (req,res) => {
+  
  
-      else if (req.body.Title!=null)
-     {
-        field = 'Title';
-        given = req.body.Title;
-     }
+  mongoose.connection.collection("books").findOne({ISBN:req.query.search_param},
+  (err,doc) =>{
+   
+    if(!doc)
+    {
+      mongoose.connection.collection("books").findOne({AuthorId:req.query.search_param},
+        (err,doc) =>{
+          if(!doc)
+          {
+            mongoose.connection.collection("books").findOne({Title:req.query.search_param},
+              (err,doc) =>{
+                if(!doc)
+                {
+                  res.status(404).json({  // sends a json with 404 code
+                    success: false ,  // book not retrieved  
+                    "Message":"Search field not found in either ISBN, Title, or AuthorId !"});
+                }
+                else if (err)
+                {
+                  res.status(404).json({  // sends a json with 404 code
+                    success: false ,  // book not retrieved  
+                    "Message":"No valid parameter is given !"});
+                }
+                else
+                {
+                  res.status(200).json(doc);
+                }
 
-     else if (req.body.Isbn!=null)
+              })
+          }
+           else if (err)
+           {
+            res.status(404).json({  // sends a json with 404 code
+              success: false ,  // book not retrieved  
+               "Message":"No valid parameter is given !"});
+           }
+           else
+           {
+            res.status(200).json(doc);
+           }
+        })
+    }
+     else if (err)
      {
-        field = 'Isbn';
-        given = req.body.Isbn;
+      res.status(404).json({  // sends a json with 404 code
+        success: false ,  // book not retrieved  
+         "Message":"No valid parameter is given !"});
      }
      else
      {
-        return  res.status(400).send("Invalid request, no authorid, book title, or isbn were found");
+      res.status(200).json(doc);
      }
-
-
-  Book.find( {field:given},(err,doc)=>
-
-   {
-    if(!doc)
-    {
-   return res.status(404).send("Book Not found");
     }
-      
-    res.status(200).send(
-        doc
-    )
-   }
-)
-});
 
+
+  )}); 
 //Get reviews from book by id 
 /**
  * 
- * @api {GET} /api/books/reviews Get book reviews by id 
+ * @api {GET} /api/Book/reviewbyid/?book_id=Value Get book reviews by id 
  * @apiName GetReviewsbyBookId
  * @apiGroup Books
  * @apiVersion  0.0.0
@@ -200,28 +219,175 @@ router.get("/find",(req,res)=>
  */
 
 
-    router.get('/reviews', async (req,res) => {
+router.get('/reviewbyid', async (req,res) => {
   
-        //get reviews enta kda btrg3 books brdo ya sameh
+        
       
-        mongoose.connection.collection("books").findOne({BookId:req.query.book_id},
-        (err,doc) =>{
-         
-          if(!doc || err)
-          {
-            res.status(404).json({  // sends a json with 404 code
-              success: false ,  // book not retrieved  
-               "Message":"Book ID not  found !"});
-          }
-           else
-           {
-           res.status(200).json(doc);
-          
-           }
-          }
-      
-      
-        )}); 
+  mongoose.connection.collection("Reviews").findOne({bookId:req.query.book_id},
+  (err,doc) =>{
+   
+    if(!doc || err)
+    {
+      res.status(404).json({  // sends a json with 404 code
+        success: false ,  // book not retrieved  
+         "Message":"Book ID not  found !"});
+    }
+     else
+     {
+     res.status(200).json(doc);
+    
+     }
+    }
+
+
+  )}); 
+
+//Get reviews from book by isbn 
+/**
+* 
+* @api {GET} /api/Book/reviewbyisbn/?book_isbn=Value Get book reviews by isbn 
+* @apiName GetReviewsbyBookId
+* @apiGroup Books
+* @apiVersion  0.0.0
+* 
+* 
+* @apiParam  {string} ISBN Book ISBN.
+* @apiParam {number} [rating=0] Limit reviews to a particular rating or above,(default is 0).
+* 
+* @apiSuccess {string} UserId User-ID.
+* @apiSuccess {string} BookId Book-ID.
+* @apiSuccess {string} ReviewId Review-ID.
+* @apiSuccess {string} ReviewBody The text for the review entered by user.
+* @apiSuccess {DatePicker} ReviewDate Date where review was entered by user.
+* @apiSuccess {Number}   ReviewRating       Rating for the review.
+* 
+* @apiSuccessExample {json} Success
+*     HTTP/1.1 200 OK
+*     {
+*          "ReviewId":"5c9243a5beb4101160e23fdd",
+*          "BookId":"5c9114a012d11bb226399497",
+*          "UserId":"5c9132dd47cb909f7fbbe875",
+*          "ReviewRating":5.0,
+*          "ReviewBody":"Mollit tempor consequat magna officia occaecat laborum duis consequat qui sunt ipsum. Commodo cillum voluptate incididunt mollit non non voluptate cillum id magna qui laborum ullamco adipisicing. Dolore consequat fugiat ut Lorem incididunt ea dolore voluptate aliquip. Reprehenderit duis est do ad consequat ad enim pariatur ad Lorem Lorem enim officia exercitation. Magna ea ipsum laborum sint est.\r\n",
+*          "ReviewDate":" 2015-12-03T02:44:27 -02:00"
+*          
+*     }
+* 
+* @apiError Book-Not-Found The <code>Book</code> was not found
+*/
+router.get('/reviewbyisbn', async (req,res) => {
+
+
+mongoose.connection.collection("books").findOne({ISBN:req.query.book_isbn},
+(err,doc) =>{
+
+if(!doc || err)
+{
+res.status(404).json({  // sends a json with 404 code
+  success: false ,  // book not retrieved  
+   "Message":"Book ISBN not  found !"});
+}
+else
+{
+ book_id  = doc.BookId;
+ mongoose.connection.collection("Reviews").findOne({bookId:book_id},
+  (err,doc) =>{
+   
+    if(!doc || err)
+    {
+      res.status(404).json({  // sends a json with 404 code
+        success: false ,  // book not retrieved  
+         "Message":"Book ID not  found !"});
+    }
+     else
+     {
+     res.status(200).json(doc);
+    
+     }
+    }
+
+
+  )
+}
+}
+
+
+)}); 
+
+//Get reviews from book by Title 
+/**
+* 
+* @api {GET} /api/Book/reviewbytitle/?book_title=Value Get book reviews by title 
+* @apiName GetReviewsbyBookId
+* @apiGroup Books
+* @apiVersion  0.0.0
+* 
+* 
+* @apiParam  {string} Title Book title.
+* @apiParam {number} [rating=0] Limit reviews to a particular rating or above,(default is 0).
+* 
+* @apiSuccess {string} UserId User-ID.
+* @apiSuccess {string} BookId Book-ID.
+* @apiSuccess {string} ReviewId Review-ID.
+* @apiSuccess {string} ReviewBody The text for the review entered by user.
+* @apiSuccess {DatePicker} ReviewDate Date where review was entered by user.
+* @apiSuccess {Number}   ReviewRating       Rating for the review.
+* 
+* @apiSuccessExample {json} Success
+*     HTTP/1.1 200 OK
+*     {
+*          "ReviewId":"5c9243a5beb4101160e23fdd",
+*          "BookId":"5c9114a012d11bb226399497",
+*          "UserId":"5c9132dd47cb909f7fbbe875",
+*          "ReviewRating":5.0,
+*          "ReviewBody":"Mollit tempor consequat magna officia occaecat laborum duis consequat qui sunt ipsum. Commodo cillum voluptate incididunt mollit non non voluptate cillum id magna qui laborum ullamco adipisicing. Dolore consequat fugiat ut Lorem incididunt ea dolore voluptate aliquip. Reprehenderit duis est do ad consequat ad enim pariatur ad Lorem Lorem enim officia exercitation. Magna ea ipsum laborum sint est.\r\n",
+*          "ReviewDate":" 2015-12-03T02:44:27 -02:00"
+*          
+*     }
+* 
+* @apiError Book-Not-Found The <code>Book</code> was not found
+*/
+router.get('/reviewbytitle', async (req,res) => {
+
+
+mongoose.connection.collection("books").findOne({Title:req.query.book_title},
+(err,doc) =>{
+
+if(!doc || err)
+{
+res.status(404).json({  // sends a json with 404 code
+  success: false ,  // book not retrieved  
+   "Message":"Book Title not  found !"});
+}
+else
+{
+ book_id  = doc.BookId;
+ mongoose.connection.collection("Reviews").findOne({bookId:book_id},
+  (err,doc) =>{
+   
+    if(!doc || err)
+    {
+      res.status(404).json({  // sends a json with 404 code
+        success: false ,  // book not retrieved  
+         "Message":"Book ID not  found !"});
+    }
+     else
+     {
+     res.status(200).json(doc);
+    
+     }
+    }
+
+
+  )
+}
+}
+
+
+)}); 
+
+
+
 
         //convert isbns to ids
         /**
