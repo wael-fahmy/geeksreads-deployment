@@ -17,7 +17,7 @@ const Review = require("./routes/reviewsController");
 const Resources= require("./routes/Resources");
 const Books = require("./routes/Books");
 const OwnedBooks= require("./routes/ownedBooks");
-
+const Search = require("./routes/Search");
 const app = express();
 
 var allowCrossDomain = function(req, res, next) {
@@ -68,6 +68,8 @@ app.use('/api/reviews', Review);
 app.use('/api/resources', Resources);
 app.use('/api/books', Books);
 app.use('/api/owned_books', OwnedBooks);
+app.use('/api/search', Search);
+
 
 
 app.use((req, res, next) => {
