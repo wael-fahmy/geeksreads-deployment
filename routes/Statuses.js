@@ -34,7 +34,7 @@ const router = express.Router();
  * @apiError Status-Not-Found The <code>Status</code> was not found
  */
 
-router.post("/",(req,res)=>
+router.post("/update",auth,(req,res)=>
 {
 
  if (req.body.length == 0)
@@ -149,7 +149,7 @@ router.post("/",(req,res)=>
  */
 
 
-router.get("/show" ,auth,async(req,res)=>
+router.all("/show" ,auth,async(req,res)=>
  {
 //      if(req.query.UserId==null)
 //      {
@@ -231,7 +231,7 @@ router.get("/show" ,auth,async(req,res)=>
 * }
 * @apiError Status-Not-Found The <code>StatusID</code> was not found
 */
-router.post("/delete",(req,res)=>
+router.post("/delete",auth,(req,res)=>
 {
      if(req.body.StatusId==null)
      {
