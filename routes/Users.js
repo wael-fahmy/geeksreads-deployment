@@ -91,7 +91,7 @@ router.all('/me', auth, async (req, res) => {
 
 
 
-router.all('/GetUserById', auth, async (req, res) => {
+router.all('/GetUserById', auth, async (req, res) => {////////////////////other profile
   let check = await User.findOne({ UserId: req.user._id });
   if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
   const userdisplay = await User.findById(req.body.UserId).select('-UserPassword  -_id  -__v ');

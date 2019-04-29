@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const Author= require('../models/Author.model');
+const auth = require('../middleware/auth');
 
 
          
@@ -168,7 +169,7 @@ router.get('/name', async (req,res) => {
    */
   
    //UNFollow Author
-   router.post('/unfollow', async (req, res) => { //sends post request to /Authors/unFollow End point through the router
+   router.post('/unfollow', auth,async (req, res) => { //sends post request to /Authors/unFollow End point through the router
     /* console.log(req.body.auth_id);
     console.log(req.auth_id);
     console.log(req.params.auth_id);
@@ -238,7 +239,7 @@ router.get('/name', async (req,res) => {
    */
   
    //Follow Author
-   router.post('/follow', async (req, res) => { //sends post request to /Authors/Follow End point through the router
+   router.post('/follow',auth,async (req, res) => { //sends post request to /Authors/Follow End point through the router
     /* console.log(req.body.auth_id);
     console.log(req.auth_id);
     console.log(req.params.auth_id);*/
