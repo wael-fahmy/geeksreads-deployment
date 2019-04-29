@@ -7,6 +7,7 @@ const {validate,review} = require('../models/reviews.model');
 const book =require('../models/Book').Books;
 const user = require('../models/User').User;
 const Joi = require('joi');
+const auth = require('../middleware/auth');
 ///////////////////Req and Res Logic////////////////////////
 
 /**
@@ -29,7 +30,7 @@ const Joi = require('joi');
 
 
 ////post////
-Router.post('/add', async (req, res) => {
+Router.post('/add', auth,async (req, res) => {
         if(req.body.rating!=null)
         {
             rate = req.body.rating;
@@ -137,7 +138,7 @@ Router.all('/getReview',async(req,res)=>{
 
  */
 //////////////////////////////
-Router.post('/remove',async (req,res)=>{
+Router.post('/remove',auth,async (req,res)=>{
     const { error } = validateget(req.body);
     if (error) return res.status(400).send(error.details[0].message);
  review.findOneAndDelete({'reviewId':req.body.reviewId},(err)=>{
@@ -164,7 +165,7 @@ Router.post('/remove',async (req,res)=>{
 
  */
 //////////bookId,userId,rating///////////////
-Router.post('/rate', async (req, res) => {
+Router.post('/rate', auth,async (req, res) => {
     if (req.body.rating < 0 | req.body.rating > 5) {
         return res.status(400).send("sent Rating is out of range 0 to 5");
     }
@@ -249,7 +250,7 @@ Router.post('/rate', async (req, res) => {
 
  */
 /////////////////////////////////////
-Router.post('/editRevById',async (req, res) =>{
+Router.post('/editRevById',auth,async (req, res) =>{
     review.findOneAndUpdate({"reviewId":req.body.reviewId},{$set:{reviewBody:req.body.reviewBody}},function (err, user1) {
         if (!err) {             
             return res.status(200).send({ "UpdatedReviewSuc": true });

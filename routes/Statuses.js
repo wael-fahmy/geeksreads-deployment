@@ -34,7 +34,7 @@ const router = express.Router();
  * @apiError Status-Not-Found The <code>Status</code> was not found
  */
 
-router.post("/update",auth,(req,res)=>
+router.post("/update",(req,res)=>
 {
 
  if (req.body.length == 0)

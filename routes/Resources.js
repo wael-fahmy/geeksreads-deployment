@@ -7,7 +7,7 @@ const {review} = require('../models/reviews.model');
 const {comment}=require('../models/comments.model');
 const{CreatNotification} = require('../models/Notifications');
 const {CreatStatuses} = require("../models/Statuses")
-
+const auth = require('../middleware/auth');
 const router = express.Router();
 /**
  * @api {Post} /like Like a resource 
@@ -29,7 +29,7 @@ const router = express.Router();
     
 
 */
-router.post('/like',(req,res)=>{
+router.post('/like',auth,(req,res)=>{
 
     // input validation
     console.log(req.body.resourceId);
@@ -159,7 +159,7 @@ router.post('/like',(req,res)=>{
  * 
  */
 
-router.post('/unlike',(req,res)=>{
+router.post('/unlike',auth,(req,res)=>{
 
     // input validation
     console.log(req.body.resourceId);

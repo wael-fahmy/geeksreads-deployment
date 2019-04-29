@@ -9,6 +9,7 @@ const user = require("../models/User").User;
 const {review} = require("../models/reviews.model");
 const resource =mongoose.model('Resources');
 const Joi = require('joi');
+const auth = require('../middleware/auth');
 ///////////////////Req and Res Logic////////////////////////
 ////get////
 /**

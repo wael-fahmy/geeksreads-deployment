@@ -1566,7 +1566,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
 
           });
 
-    //Get User Notifications
+   //Get User Notifications
 
   /**
  * @api{Get} /User/Notifications Get User Status
@@ -1741,7 +1741,7 @@ router.all("/Notifications" ,auth ,async(req,res)=>
  * @apiError Notification-Not-Found The <code>Notification</code> was not found
  *
   */
-router.post("/Notification/seen" ,auth,(req,res)=>
+router.post("/Notification/seen",auth ,(req,res)=>
 {
      if(req.query.NotificationId==null)
      {
