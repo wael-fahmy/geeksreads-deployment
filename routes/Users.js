@@ -16,68 +16,7 @@ const express = require('express');
 const router = express.Router();
 const Author= require('../models/Author.model');
 
-router.post('/ForgotPassword', async (req, res) => {
-  const { error } = Mailvalidate(req.body);
-  if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
-  let user = await User.findOne({ UserEmail: req.body.UserEmail.toLowerCase() });
-  if(!user)  return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
-  const token = jwt.sign({ UserEmail:req.body.UserEmail.toLowerCase() }, config.get('jwtPrivateKey'), {expiresIn: '1h'});
-let transporter = nodeMailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-              user: 'geeksreads@gmail.com',
-              pass: 'AaBb1234'
-          }
-      });
-  let mailOptions = {
-     from: 'no-reply@codemoto.io',
-to: user.UserEmail,
-subject: 'Assign New Password',
-text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/api/users/ChangeForgottenPassword/.\n Copy And Paste this Verification Code to change your password :\n' +token+'\n' };
-let info = await transporter.sendMail(mailOptions);
-transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-              return console.log(error);
-          }
-res.redirect('/password-reset')
-//res.status(200).send({"ReturnMsg":"An Email has been Sent to change your Forgotten Password " + req.body.UserEmail.toLowerCase() + "."});
-//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'UserName', 'UserEmail']));
-});
-});
 
-
-
-
-
-
-router.post('/ChangeForgotPassword', auth, async (req, res) => {
-
-  let check = await User.findOne({ UserEmail: req.user.UserEmail });
-  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
-  const user = await User.findOne({UserEmail: req.user.UserEmail }).select('-UserPassword');
-  const { error } = NewPasswordOnlyValidate(req.body);
-  if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
-//  console.log(user);
-const salt = await bcrypt.genSalt(10);
-user.UserPassword = await bcrypt.hash(req.body.NewUserPassword, salt);
-await user.save();
-res.status(200).send({
-  "ReturnMsg": "Update Successful"
-});
-
-});
-
-router.post('/SignOut', auth, async (req, res) => {
-
-  let check = await User.findOne({ UserId: req.user._id });
-  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
-  res.status(200).send({
-  "ReturnMsg": "Signed out Successfully"
-  });
-
-});
 
 
 //get current User
@@ -153,7 +92,68 @@ router.all('/me', auth, async (req, res) => {
 });
 
 
+router.post('/ForgotPassword', async (req, res) => {
+  const { error } = Mailvalidate(req.body);
+  if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
+  let user = await User.findOne({ UserEmail: req.body.UserEmail.toLowerCase() });
+  if(!user)  return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+  const token = jwt.sign({ UserEmail:req.body.UserEmail.toLowerCase() }, config.get('jwtPrivateKey'), {expiresIn: '1h'});
+let transporter = nodeMailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+              user: 'geeksreads@gmail.com',
+              pass: 'AaBb1234'
+          }
+      });
+  let mailOptions = {
+     from: 'no-reply@codemoto.io',
+to: user.UserEmail,
+subject: 'Assign New Password',
+text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/api/users/ChangeForgottenPassword/.\n Copy And Paste this Verification Code to change your password :\n' +token+'\n' };
+let info = await transporter.sendMail(mailOptions);
+transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+res.redirect('/password-reset')
+//res.status(200).send({"ReturnMsg":"An Email has been Sent to change your Forgotten Password " + req.body.UserEmail.toLowerCase() + "."});
+//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'UserName', 'UserEmail']));
+});
+});
 
+
+
+
+
+
+router.post('/ChangeForgotPassword', auth, async (req, res) => {
+
+  let check = await User.findOne({ UserEmail: req.user.UserEmail });
+  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+  const user = await User.findOne({UserEmail: req.user.UserEmail }).select('-UserPassword');
+  const { error } = NewPasswordOnlyValidate(req.body);
+  if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
+//  console.log(user);
+const salt = await bcrypt.genSalt(10);
+user.UserPassword = await bcrypt.hash(req.body.NewUserPassword, salt);
+await user.save();
+res.status(200).send({
+  "ReturnMsg": "Update Successful"
+});
+
+});
+
+router.post('/SignOut', auth, async (req, res) => {
+
+  let check = await User.findOne({ UserId: req.user._id });
+  if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+  res.status(200).send({
+  "ReturnMsg": "Signed out Successfully"
+  });
+
+});
 
 router.all('/GetUserById', auth, async (req, res) => {////////////////////other profile
   let check = await User.findOne({ UserId: req.user._id });
