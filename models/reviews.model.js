@@ -71,7 +71,8 @@ function validateReview(Review) {
     photo: Joi.string(),
     bookId: Joi.string(),
     userId: Joi.string(),
-    likesCount: Joi.number().min(0).max(5)
+    likesCount: Joi.number().min(0).max(5),
+    token:Joi.string()
     };
     return Joi.validate(Review, schema);
     }
