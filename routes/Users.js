@@ -111,7 +111,7 @@ let transporter = nodeMailer.createTransport({
      from: 'no-reply@codemoto.io',
 to: user.UserEmail,
 subject: 'Assign New Password',
-text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/api/users/ChangeForgottenPassword'+'\n Copy And Paste this Verification Code to change your password :\n' +token+'\n' };
+text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/password-reset'+'\n Copy And Paste this Verification Code to change your password :\n' +token+'\n' };
 let info = await transporter.sendMail(mailOptions);
 transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
@@ -139,10 +139,10 @@ router.post('/ChangeForgotPassword', auth, async (req, res) => {
 const salt = await bcrypt.genSalt(10);
 user.UserPassword = await bcrypt.hash(req.body.NewUserPassword, salt);
 await user.save();
-res.redirect('/password-reset');
-//res.status(200).send({
- // "ReturnMsg": "Update Successful"
-//});
+
+res.status(200).send({
+  "ReturnMsg": "Update Successful"
+});
 
 });
 
