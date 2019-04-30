@@ -151,8 +151,8 @@ function validateMail(User) {
   function validateNewPasswordOnly(User) {
   const schema = {
   token: Joi.string(),
-  NewUserPassword: Joi.string().min(6).max(255).required(),
-  UserEmail: Joi.string().min(6).max(255).required().email()
+  NewUserPassword: Joi.string().min(6).max(255).required()
+
   };
   return Joi.validate(User, schema);
   }
