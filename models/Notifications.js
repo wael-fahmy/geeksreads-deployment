@@ -112,6 +112,14 @@ MakerName:
       {
           type: String
       },
+      AutorName:
+      {
+        type: String
+      },
+      AutorId:
+      {
+        type: String
+      },
 
       BookStatus: // Read WantToRead Reading 
       {
@@ -189,7 +197,10 @@ await Books.findOne({"BookId":Book1Id},(err,doc) =>
       console.log (doc);
       newNotification.BookId=doc.BookId;
       newNotification.BookName=doc.Title;
-      newNotification.BookPhoto=doc.Cover;    
+      newNotification.BookPhoto=doc.Cover;
+      newNotification.AuthorName= doc.AuthorName;
+      newNotification.AuthorId= doc.AuthorId;
+
     }
 
 

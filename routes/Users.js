@@ -35,7 +35,7 @@ let transporter = nodeMailer.createTransport({
      from: 'no-reply@codemoto.io',
 to: user.UserEmail,
 subject: 'Assign New Password',
-text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/api/users/ChangeForgottenPassword/.\n token=' +token+'\n' };
+text: 'Hello,\n\n' + 'Please Click on this link to change your Password: \nhttp:\/\/' + req.headers.host + '/api/users/ChangeForgottenPassword/.\n Copy And Paste this Verification Code to change your password :\n' +token+'\n' };
 let info = await transporter.sendMail(mailOptions);
 transporter.sendMail(mailOptions, (error, info) => {
           if (error) {

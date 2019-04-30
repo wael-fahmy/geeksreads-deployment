@@ -94,7 +94,14 @@ const StatusesSchema = new mongoose.Schema({
     {
         type: String
     },
-    
+    AutorName:
+    {
+
+    },
+    AutorId:
+    {
+
+    },
     BookStatus: // Read WantToRead Reading 
     {
     type: String
@@ -115,7 +122,8 @@ function validateStatuses(Status) {
         StatusBody: Joi.string().required().max(200),
         ReviewId: Joi.string(),
         CommentId: Joi.string(),
-        StatusDate:  Joi.date().iso()
+        StatusDate:  Joi.date().iso(),
+        token: Joi.string()
     };
     return Joi.validate(Status, schema);
     }
@@ -193,7 +201,11 @@ await review.findOne({"reviewId":ReviewId},(err,doc) =>
       newStatus.BookId=doc.BookId;
       newStatus.BookName=doc.Title;
       newStatus.BookPhoto=doc.Cover;    
+      newStatus.AuthorName= doc.AuthorName;
+      newStatus.AuthorId= doc.AuthorId;
+
     }
+
 
 
 });
@@ -210,6 +222,9 @@ else if ( Type == "Rate")
       newStatus.BookId=doc.BookId;
       newStatus.BookName=doc.Title;
       newStatus.BookPhoto=doc.Cover;    
+      newStatus.AuthorName= doc.AuthorName;
+      newStatus.AuthorId= doc.AuthorId;
+
     }
   });
 newStatus.NumberOfStars =NumberOfStars;

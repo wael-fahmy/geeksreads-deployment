@@ -46,7 +46,8 @@ function validateComment(Comment) {
    ReviewId:Joi.string().min(24),
    userId:Joi.string().min(24),
    Photo: Joi.string(),
-   LikesCount: Joi.number()
+   LikesCount: Joi.number(),
+   token:Joi.string()
    };
    return Joi.validate(Comment, schema);
    }
