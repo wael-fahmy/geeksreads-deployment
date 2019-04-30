@@ -280,5 +280,123 @@ router.get('/name', async (req,res) => {
           
          
           });  
-  
+  //Show author following information
+   /**
+    * @api{POST}/api/Authors/isfollowed Show author following information
+    * @apiName Show author following information
+    * @apiGroup Authors 
+    * @apiError {404} id-not-found The<code>user_id</code> was not found.
+    * @apiSuccess {200} Request  Successful or not
+    * @apiParam  {String} user_id GoodReads User ID
+    * @apiParam  {String} auth_id GoodReads Author ID
+
+ * @apiSuccessExample {JSON}
+ * HTTP/1.1 200 OK
+   {
+   Isfollowed:true
+   }
+    * @apiSuccessExample {JSON}
+ * HTTP/1.1 200 OK
+   {
+   Isfollowed:false
+   }
+ *  @apiErrorExample {JSON}
+ *HTTP/1.1 404 Not Found
+ * {
+ * "success": false,
+ * "Message":"User Id not  found !"
+ * }
+ *
+ *
+ */
+
+
+router.post('/isfollowed', auth,async (req, res) => { //sends post request to /isfollowed End point through the router
+  /* console.log(req.body.userId_tobefollowed);
+  console.log(req.userId_tobefollowed);
+  console.log(req.params.userId_tobefollowed);
+  console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
+  console.log("my"+req.query.myuserid);*/
+  await  mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.user_id},{FollowingAuthorId:req.query.auth_id}]},
+      (err,doc) =>{
+       
+       // console.log(to(doc.FollowingAuthorId));
+
+        if(!doc || err)
+        {
+       //   console.log(doc);
+          res.status(404).json({  // sends a json with 404 code
+             
+             "isfollowed":"false"});
+        }
+         else
+         {
+         //console.log(doc);
+         res.status(200).json({"isfollowed":"true"});
+        
+         }
+        });
+ });
+
+  /***************************
+    //Get Number of Books Written By Author
+   /**
+    * @api{POST}/api/Authors/numbooks Get Number of Books Written By Author
+    * @apiName Get Number of Books Written By Author
+    * @apiGroup Authors 
+    * @apiError {404} id-not-found The<code>auth_id</code> was not found.
+    * @apiSuccess {200} Request  Successful or not
+    * @apiParam  {String} auth_id GoodReads User ID
+
+ * @apiSuccessExample {JSON}
+ * HTTP/1.1 200 OK
+   {
+   Number of Books :6
+   }
+ *  @apiErrorExample {JSON}
+ *HTTP/1.1 404 Not Found
+ * {
+ * "success": false,
+ * "Message":"Author Id not  found !"
+ * }
+ *
+ *
+ */
+
+
+router.post('/numbooks', async (req, res) => { //sends post request to /numbooks End point through the router
+  /* console.log(req.body.userId_tobefollowed);
+  console.log(req.userId_tobefollowed);
+  console.log(req.params.userId_tobefollowed);
+  console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
+  console.log("my"+req.query.myuserid);*/
+  //  mongoose.connection.collection("Authors").aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}},
+  await mongoose.connection.collection("Authors").findOne({AuthorId:req.query.auth_id},  
+  (err,doc) =>{
+       //> db.Authors.aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}}).pretty()
+       //console.log(doc.BookId.length);
+
+        if(!doc || err)
+        {
+       //   console.log(doc);
+        
+             
+            res.status(404).json({  // sends a json with 404 code
+              success: false ,  // Request  Failed
+               "Message":"Author Id not  found !"});
+          
+        }
+         else
+         {
+         //console.log(doc);
+         res.status(200).json({
+
+           "Number Of Books":doc.BookId.length
+
+          });
+        
+
+         }
+        });
+ });
           module.exports = router;

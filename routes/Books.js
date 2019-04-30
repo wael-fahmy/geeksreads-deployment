@@ -125,7 +125,7 @@ router.get('/id', async (req,res) => {
  * @apiError Author-not-found   The <code>Author</code> was not found.
  */
 
-router.get('/find', async (req,res) => {
+router.get('/author', async (req,res) => {
   
  
   mongoose.connection.collection("books").findOne({ISBN:req.query.search_param},
@@ -498,23 +498,26 @@ router.get('/isbn', async (req,res) => {
  * @apiError genre-not-found   The <code>genre</code> was not found.
  */
 router.get('/genre', async (req,res) => {
-  if (!req.query.Genre)
-  {
-    res.status(400).send("Bad request no genre")
-  }
-  mongoose.connection.collection("books").find({Genre:req.query.Genre},
-    (err,doc) =>{ 
-      if (!doc)
-      {
-        res.status(404).send("No books with this Gerne was Found")
-      }
-      else 
-      {
-        res.status(200).send(doc);
-      }
-
-    });
-  });
   
+        
+      
+  Books.find({'Genre':req.query.Genre}).then
+  (bookArr =>{
+   
+    if(bookArr.length==0)
+    {
+      res.status(404).json({  // sends a json with 404 code
+        success: false ,  // book not retrieved 
+        "Message":"No books with this Genre was Found"});
+      }
+     else
+     {
+     res.status(200).json(bookArr);
+    
+     }
+    }).catch(err => res.status(404).json({ success: false }));
+
+
+  });
  
 module.exports = router;
