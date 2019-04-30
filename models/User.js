@@ -142,7 +142,22 @@ NewUserPhoto: Joi.string()
 };
 return Joi.validate(User, schema);
 }
+function validateMail(User) {
+  const schema = {
+  UserEmail: Joi.string().min(6).max(255).required().email()
+  };
+  return Joi.validate(User, schema);
+  }
+  function validateNewPasswordOnly(User) {
+  const schema = {
+  token: Joi.string(),
+  NewUserPassword: Joi.string().min(6).max(255).required()
+  };
+  return Joi.validate(User, schema);
+  }
 exports.User = User;
 exports.validate= validateUser;
 exports.DateValidate= validateDate;
 exports.NewPassWordValidate=  validateNewPassword;
+exports.Mailvalidate= validateMail;
+exports.NewPasswordOnlyValidate= validateNewPasswordOnly;

@@ -92,7 +92,7 @@ router.all('/me', auth, async (req, res) => {
 });
 
 
-router.post('/forgotpassword', async (req, res) => {
+router.post('/ForgotPassword', async (req, res) => {
   const { error } = Mailvalidate(req.body);
   if (error) return res.status(400).send({"ReturnMsg":error.details[0].message});
   let user = await User.findOne({ UserEmail: req.body.UserEmail.toLowerCase() });
