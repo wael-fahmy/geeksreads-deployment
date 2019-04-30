@@ -117,8 +117,8 @@ transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
               return console.log(error);
           }
-res.redirect('/password-reset')
-//res.status(200).send({"ReturnMsg":"An Email has been Sent to change your Forgotten Password " + req.body.UserEmail.toLowerCase() + "."});
+//res.redirect('/password-reset')
+res.status(200).send({"ReturnMsg":"An Email has been Sent to change your Forgotten Password " + req.body.UserEmail.toLowerCase() + "."});
 //res.header('x-auth-token', token).send(_.pick(user, ['_id', 'UserName', 'UserEmail']));
 });
 });
@@ -139,9 +139,10 @@ router.post('/ChangeForgotPassword', auth, async (req, res) => {
 const salt = await bcrypt.genSalt(10);
 user.UserPassword = await bcrypt.hash(req.body.NewUserPassword, salt);
 await user.save();
-res.status(200).send({
-  "ReturnMsg": "Update Successful"
-});
+res.redirect('/password-reset');
+//res.status(200).send({
+ // "ReturnMsg": "Update Successful"
+//});
 
 });
 
