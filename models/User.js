@@ -128,6 +128,7 @@ return Joi.validate(User, schema);
 }
 function validateNewPassword(User) {
 const schema = {
+token: Joi.string(),
 OldUserPassword: Joi.string().min(6).max(255).required(),
 NewUserPassword: Joi.string().min(6).max(255).required()
 };
