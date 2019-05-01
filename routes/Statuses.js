@@ -149,7 +149,7 @@ router.post("/update",(req,res)=>
  */
 
 
-router.all("/show" ,auth,async(req,res)=>
+router.post("/show" ,auth,async(req,res)=>
  {
 //      if(req.query.UserId==null)
 //      {
