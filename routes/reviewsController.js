@@ -30,76 +30,76 @@ const auth = require('../middleware/auth');
 
 
 ////post////
-Router.post('/add', auth,async (req, res) => {
-        if(req.body.rating!=null)
-        {
-            rate = req.body.rating;
-        }
-        else{
-            rate = 0;
-            req.body.rating=0;
-        }
-     const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-    var review1= new review();
-    let check = await user.findOne({ UserId: req.body.userId });
-    if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
-    const user1 = await user.findById(req.body.userId);
-    let check1 = await book.findOne({ BookId: req.body.bookId });
-    console.log(check1);
-    if (!check1) return res.status(400).send({"ReturnMsg":"Book Doesn't Exist"});
-    
-    const book1 =check1;
-    console.log(book1);
-        review1.reviewId=review1._id; //1  
-        review1.bookId=req.body.bookId; //2
-        review1.bookCover=  book1.Cover; 
-        review1.reviewBody=req.body.reviewBody; //4
-        review1.reviewDate=req.body.reviewDate; //5
-        review1.userId=user1.UserId; //7
-        review1.liked=false;
-        review1.commCount=0;
-        review1.userName=user1.UserName; //8
-        review1.photo=user1.Photo; //9 Users Photo 
-        review1.likesCount=0; //10
-        console.log(user1.UserName);
-        console.log(user1.UserId);
-        console.log(review1.userName);
-    review1.save(async(err,doc)=>{
-        if (!err) {           
-            {       await review.findOneAndUpdate({"reviewId":review1._id},{$set:{rating:rate}},function (err, user1) {
-                if (!err) {             
+Router.post('/add', auth,async (req, res) =>{
+    if(req.body.rating!=null)
+    {
+        rate = req.body.rating;
+    }
+    else{
+        rate = 0;
+        req.body.rating=0;
+    }
+ const { error } = validate(req.body);
+if (error) return res.status(400).send(error.details[0].message);
+var review1= new review();
+let check = await user.findOne({ UserId: req.body.userId });
+if (!check) return res.status(400).send({"ReturnMsg":"User Doesn't Exist"});
+const user1 = await user.findById(req.body.userId);
+let check1 = await book.findOne({ BookId: req.body.bookId });
+console.log(check1);
+if (!check1) return res.status(400).send({"ReturnMsg":"Book Doesn't Exist"});
 
-                    console.log ("we  saving")
-                  
-                  if (user1.FollowersUserId)
-                  {  
-                  var n = user1.FollowersUserId.length; 
-                   console.log(n);
-                     for (i=0;i<n;i++)
-                   {
+const book1 =check1;
+console.log(book1);
+    review1.reviewId=review1._id; //1  
+    review1.bookId=req.body.bookId; //2
+    review1.bookCover=  book1.Cover; 
+    review1.reviewBody=req.body.reviewBody; //4
+    review1.reviewDate=req.body.reviewDate; //5
+    review1.userId=user1.UserId; //7
+    review1.liked=false;
+    review1.commCount=0;
+    review1.userName=user1.UserName; //8
+    review1.photo=user1.Photo; //9 Users Photo 
+    review1.likesCount=0; //10
+    console.log(user1.UserName);
+    console.log(user1.UserId);
+    console.log(review1.userName);
+review1.save(async(err,doc)=>{
+    if (!err) {           
+        {       await review.findOneAndUpdate({"reviewId":review1._id},{$set:{rating:rate}},function (err, user1) {
+            if (!err) {             
 
-                         CreatStatuses( FollowersUserId[i] ,review1.reviewId , null , "Review" , req.body.userId, null, review1.bookId);
+                console.log ("we  saving")
+              
+              if (user1.FollowersUserId)
+              {  
+              var n = user1.FollowersUserId.length; 
+               console.log(n);
+                 for (i=0;i<n;i++)
+               {
 
-                   }  
-                }
+                     CreatStatuses( FollowersUserId[i] ,review1.reviewId , null , "Review" , null, review1.bookId);
+
+               }  
+            }
 
 
 
-                    return res.status(200).send({ "AddedReviewSuc": true });
-                }
-                else {
-                    console.log('error during log insertion: ' + err);
-                    return res.status(404).send("Not found");
-                    console.log('error during log insertion: ' + err);}
-            });
-        }  
-        }
-        else {
-            res.json({ "AddedReviewSuc": false });
-            console.log('error during log insertion: ' + err);
-        }    
-    })
+                return res.status(200).send({ "AddedReviewSuc": true });
+            }
+            else {
+                console.log('error during log insertion: ' + err);
+                return res.status(404).send("Not found");
+                console.log('error during log insertion: ' + err);}
+        });
+    }  
+    }
+    else {
+        res.json({ "AddedReviewSuc": false });
+        console.log('error during log insertion: ' + err);
+    }    
+})
 });
 
 /////////////////////////////////////////

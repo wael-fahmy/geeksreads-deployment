@@ -1634,47 +1634,91 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 //Follow User
-router.post('/follow', auth,async (req, res) => { //sends post request to /Follow End point through the router
+router.post('/follow', async (req, res) => { //sends post request to /Follow End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
-    mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+ // console.log("my"+req.query.myuserid);
+  //console.log(req.query.userId_tobefollowed);
+ await  mongoose.connection.collection("users").findOne({  UserId :  req.query.userId_tobefollowed},
+    function (err,doc) { // error handling and checking for returned mongo doc after query
+
+      if (!doc || err) //matched count checks for number of affected documents by query
+      { res.status(404).json({ // sends a json with 404 code
+       success: false , // Follow Failed
+        "Message":"userId_tobefollowed not  found !"});
+      }
+      else
       {
-          UserId :  req.query.userId_tobefollowed //access document of user i want to follow
-      },
-      {$push: { // Push to end of array of the user's followers
-        FollowersUserId:req.query.myuserid
-      }}
-      ,function (err,doc) { // error handling and checking for returned mongo doc after query
+         mongoose.connection.collection("users").findOne({  UserId :  req.query.myuserid},
+          function (err,doc) { // error handling and checking for returned mongo doc after query
 
-         if (doc.matchedCount==0 || err) //matched count checks for number of affected documents by query
-         { res.status(404).json({ // sends a json with 404 code
-          success: false , // Follow Failed
-           "Message":"User Id not  found !"});
-         }
-       else
-       {
-       res.status(200).json({ //sends a json with 200 code
-         success: true ,//Follow Done
-          "Message":"Sucessfully done"});
-       }
-    });
-    mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
-        {
-            UserId :req.query.myuserid//access document of currently logged In user
-        },
-        {$push: { // Push to end of array of the users I follow
-          FollowingUserId: req.query.userId_tobefollowed
-        }});
+            if (!doc  || err) //matched count checks for number of affected documents by query
+            { res.status(404).json({ // sends a json with 404 code
+             success: false , // Follow Failed
+              "Message":"myuserid not  found !"});
+            }
+            else
+            {
+              mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.myuserid},{FollowingUserId:req.query.userId_tobefollowed}]},
+            function (err,doc) { // error handling and checking for returned mongo doc after query
 
-
-
-        });
-
-
-
+              if(!doc || err)
+              {
+                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+                  {
+                      UserId :  req.query.userId_tobefollowed //access document of user i want to follow
+                  },
+                  {$push: { // Push to end of array of the user's followers
+                    FollowersUserId:req.query.myuserid
+                  }}
+                  ,function (err,doc) { // error handling and checking for returned mongo doc after query
+            
+                     if (!doc  || err) //matched count checks for number of affected documents by query
+                     { res.status(404).json({ // sends a json with 404 code
+                      success: false , // Follow Failed
+                       "Message":"error !"});
+                     }
+                   else
+                   {
+                   res.status(200).json({ //sends a json with 200 code
+                     success: true ,//Follow Done
+                      "Message":"Sucessfully done"});
+                   }
+                });
+                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+                    {
+                        UserId :req.query.myuserid//access document of currently logged In user
+                    },
+                    {$push: { // Push to end of array of the users I follow
+                      FollowingUserId: req.query.userId_tobefollowed
+                    }});
+              }
+              else
+              {
+                if (doc || err) //matched count checks for number of affected documents by query
+                { res.status(404).json({ // sends a json with 404 code
+                 success: false , // Follow Failed
+                  "Message":"user ALREADY FOLLOWED!"});
+                }
+              }
+              
+          
+            
+              
+            
+            }
+            );
+             
+            }
+          }
+          );
+      }
+    }
+    );
+  });
   //UNFollow User
  /**
  *
@@ -1705,13 +1749,14 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
  */
 
   //UNFollow User
-  router.post('/unfollow', auth,async (req, res) => { //sends post request to /unFollow End point through the router
+  router.post('/unfollow', async (req, res) => { //sends post request to /unFollow End point through the router
     /* console.log(req.body.userId_tobefollowed);
     console.log(req.userId_tobefollowed);
     console.log(req.params.userId_tobefollowed);
     console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserid);*/
-     await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+
+      mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
 
         {
             UserId :  req.query.userId_tobefollowed //access document of user i want to unfollow
@@ -1736,7 +1781,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
            "Message":"Sucessfully done"});
         }
       });
-     await mongoose.connection.collection("users").updateOne(
+      mongoose.connection.collection("users").updateOne(
           {
               UserId :req.query.myuserid//access document of currently logged In user
           },
@@ -1856,7 +1901,7 @@ router.all("/Notifications" ,auth ,async(req,res)=>
       console.log (n);
       let Result = await User.find({'UserId': req.user._id}).select('-_id LikedReview WantToRead Reading Read');
          console.log(Result);
-        
+
       for (var i=0 ;i<n;i++)
      {
        if (doc[i].ReviewId)
@@ -1866,15 +1911,15 @@ router.all("/Notifications" ,auth ,async(req,res)=>
          console.log(exsist);
 
                  if (exsist>=0) {
-                 
-                   doc[i].ReviewIsLiked =true;  
+
+                   doc[i].ReviewIsLiked =true;
                    }
                  else
                   {
-                     doc[i].ReviewIsLiked =false;  
+                     doc[i].ReviewIsLiked =false;
                    }
-                  
-               if (doc[i].BookId) // in case of review thats mean we have book so we have to check is is reading or want to read ....     
+
+               if (doc[i].BookId) // in case of review thats mean we have book so we have to check is is reading or want to read ....
                    {
                     var exsist = Result[0].WantToRead.indexOf(doc[i].BookId);
                     if (exsist>=0) {doc[i].BookStatus ="WantToRead";}
@@ -1890,13 +1935,13 @@ router.all("/Notifications" ,auth ,async(req,res)=>
                       }
                       }
                     }
-  
-  
-   
-        }    
-    
+
+
+
+        }
+
      }
-     
+
     res.status(200).send(
         doc
     )
@@ -1922,47 +1967,47 @@ router.all("/Notifications" ,auth ,async(req,res)=>
  * @apiError Notification-Not-Found The <code>Notification</code> was not found
  *
   */
-router.post("/Notification/seen",auth ,(req,res)=>
-{
-     if(req.query.NotificationId==null)
-     {
-        return  res.status(400).send("Bad request no .NotificationId  Id is there");
-    }
-
-      if (req.query.NotificationId.length == 0)
-     {
-       return  res.status(400).send("Bad request .NotificationId Id is there");
+ router.post("/Notification/seen" ,(req,res)=>
+ {
+      if(req.query.NotificationId==null)
+      {
+         return  res.status(400).send("Bad request no .NotificationId  Id is there");
      }
-
-
-  Notification.findOneAndUpdate( {'NotificationId':req.query.NotificationId},
-  { $set : {'Seen' :true} },
-  (err,doc)=>
-
-   {
-    if(!doc)
+ 
+       if (req.query.NotificationId.length == 0)
+      {
+        return  res.status(400).send("Bad request .NotificationId Id is there");
+      }
+ 
+ 
+   Notification.findOneAndUpdate( {'NotificationId':req.query.NotificationId},
+   { $set : {'Seen' :true} },
+   (err,doc)=>
+ 
     {
+     if(!doc)
+     {
+     return res.status(404).send("No Notifications were found");
+     }
+     if(doc.lenght==0)
+     {
+ 
     return res.status(404).send("No Notifications were found");
+     }
+ 
+     res.status(200).send(" 'SeenSucces' : true " )
     }
-    if(doc.lenght==0)
-    {
-
-   return res.status(404).send("No Notifications were found");
-    }
-
-    res.status(200).send(" 'SeenSucces' : true " )
-   }
-)
-  });
-
-          function validateUserOnly(reqin) {
-            const schema = {
-            UserId:Joi.string().min(24).max(24),
-            };
-            return Joi.validate(reqin, schema);
-            }
-
-
+ )
+   });
+ 
+           function validateUserOnly(reqin) {
+             const schema = {
+             UserId:Joi.string().min(24).max(24),
+             };
+             return Joi.validate(reqin, schema);
+             }
+ 
+ 
 
 
 

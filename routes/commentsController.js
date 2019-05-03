@@ -85,6 +85,7 @@ Router.post('/add',auth, async (req, res) => {
     if (!check1) return res.status(400).send({"ReturnMsg":"review Doesn't Exist"});
     const review1 = await review.findById(req.body.ReviewId);
     /////////////////////////////////////////////////////////////
+   
     comment1.Body = req.body.Body;//1
     comment1.userId=req.body.userId;//2
     comment1.userName = user1.UserName; //3
@@ -100,24 +101,28 @@ Router.post('/add',auth, async (req, res) => {
     console.log(comment1); */
     comment1.save((err, doc) => {
         if (!err) {           
-            review.findOneAndUpdate({"reviewId":req.body.ReviewId},{$inc:{commCount:1}},function (err, user1) {
+            review.findOneAndUpdate({"reviewId":req.body.ReviewId},{$inc:{commCount:1}},function (err, doc) {
                 if (!err) {
+                 
                     review.findOne({"reviewId": req.body.ReviewId},(err,doc)=>
             {
-                console.log(doc);
+                
                  if(doc)
                 {
                     var NotifiedUserId = doc.userId;
-                    console.log(doc.userId); 
+  
+                 CreatNotification(NotifiedUserId,req.body.ReviewId,comment1.CommentId,"Comment",comment1.userId,null);
+                 console.log(user1.FollowersUserId); 
+                 if ( user1.FollowersUserId)
+             {
 
-                  CreatNotification(NotifiedUserId,req.body.ReviewId,comment1.CommentId,"Comment", comment1.userId,null);
                   var n = user1.FollowersUserId.length;  
                   for (i=0;i<n;i++)
                   {
-                  CreatStatuses(user1.FollowersUserId[i],req.body.ReviewId,comment1.CommentId,"Comment",comment1.userId,null,null);
+                  CreatStatuses(user1.FollowersUserId[i],req.body.ReviewId,comment1.CommentId,"Comment",null,null);
                   }               
                 }
-
+            }
  
             });             
                     return res.status(200).send({ "AddedCommentSuc": true });
@@ -138,6 +143,7 @@ Router.post('/add',auth, async (req, res) => {
         }
     });
 });
+
 
 /////////////////////////////////////////
 function validateget(reqin) {

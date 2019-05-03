@@ -73,6 +73,9 @@ router.post("/update",(req,res)=>
 
 
 });
+
+
+
   /**
  * @api{Get} /api/user_status/show Get User Status
  * @apiVersion 0.0.0
@@ -149,7 +152,7 @@ router.post("/update",(req,res)=>
  */
 
 
-router.post("/show" ,auth,async(req,res)=>
+router.all("/show" ,auth,async(req,res)=>
  {
 //      if(req.query.UserId==null)
 //      {
@@ -231,7 +234,7 @@ router.post("/show" ,auth,async(req,res)=>
 * }
 * @apiError Status-Not-Found The <code>StatusID</code> was not found
 */
-router.post("/delete",auth,(req,res)=>
+router.post("/delete",(req,res)=>
 {
      if(req.body.StatusId==null)
      {

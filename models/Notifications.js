@@ -34,7 +34,7 @@ UserId:
       {
         type: String//url
       },
-    UsesrName:
+    UserName:
       {
         type: String
       },
@@ -93,10 +93,7 @@ MakerName:
           type: Number //9 /done
       },
       
-    CommentIsLiked:
-    {
-      type: Boolean 
-    },
+
     
       ////////////////////////////////////////
       //////////BOook/////////////////////
@@ -130,12 +127,12 @@ const Notification = mongoose.model('Notification', NotificationSchema);
 
 async function CreatNotification( NotifiedUserId ,ReviewId , Comment1Id, Type, MakerId, Book1Id )
 {
-  console.log( NotifiedUserId ,ReviewId , Comment1Id, Type, MakerId, Book1Id )
 // basic infos
 if ( NotifiedUserId ==MakerId)
 {
 return   console.log(" no notification will be added for the same user")
 }
+
   var  newNotification = new Notification(
     {
       "UserId":NotifiedUserId,
@@ -146,30 +143,28 @@ return   console.log(" no notification will be added for the same user")
     });
     newNotification.NotificationId=newNotification._id;
 //get the Maker Infos//
-   await User.findOne({ "UserId" : MakerId},(err,doc )=>
-    {
 
-      if (!doc)
-      {
-        return console.log("Wrong Maker Id")
-      }
-      else{
-        newNotification.MakerId=doc.UserId;
-        newNotification.MakerPhoto=doc.Photo;
-        newNotification.MakerName =doc.UserName; 
-  
-      }
-
-    });
-/////////////////////////////////////////
-//////// three types/////////////////
-//////////////////////////////////////////
-/////review//////
-if ( Type == "ReviewLike")
+if (MakerId)
 {
-  await review.findOne({ "reviewId": ReviewId},(err,doc) =>
-{      console.log (" indk");
+  await User.findOne({"UserId": MakerId},(err,doc)=>
+  {
     if (!doc)
+    {
+      return console.log("Wrong User Id")
+    }
+    else
+    {
+      newNotification.MakerId = doc.UserId;
+      newNotification.MakerName = doc.UserName;
+      newNotification.MakerPhoto = doc.Photo;
+
+    }
+
+  });
+
+}
+await review.findOne({ "reviewId": ReviewId},(err,doc) =>
+{   if (!doc)
   {
     return console.log("Wrong review Id")
   }
@@ -181,7 +176,9 @@ if ( Type == "ReviewLike")
     newNotification.ReviewLikesCount= doc.likesCount;
     newNotification.UserName=doc.userName;
     newNotification.UserPhoto=doc.photo;
-    
+    Book1Id= doc.bookId;
+    console.log(doc.userName);
+    console.log(newNotification.UserName);
   }
 
 });
@@ -194,7 +191,6 @@ await Books.findOne({"BookId":Book1Id},(err,doc) =>
     }
     else
     {
-      console.log (doc);
       newNotification.BookId=doc.BookId;
       newNotification.BookName=doc.Title;
       newNotification.BookPhoto=doc.Cover;
@@ -204,30 +200,12 @@ await Books.findOne({"BookId":Book1Id},(err,doc) =>
     }
 
 
-});
-}
-else if(Type == "Comment")
+});/////////////////////////////////////////
+//////// three types/////////////////
+//////////////////////////////////////////
+/////review//////
+ if(Type == "Comment")
 {
-  await review.findOne({"reviewId":ReviewId},(err,doc) =>
-{     if (!doc)
-  {
-    return console.log("Wrong review Id")
-  }
-  else
-  {
-    
-   
-    newNotification.ReviewId=doc.reviewId;
-    newNotification.ReviewBody=doc.reviewBody;
-    newNotification.ReviewDate=doc.reviewDate;
-    newNotification.ReviewLikesCount= doc.likesCount;
-    newNotification.UserName=doc.userName;
-    newNotification.UserPhoto=doc.photo;
-  }
-
-
-});
-
 await comment.findOne({"CommentId":Comment1Id},(err,doc) =>
 {    
     if (!doc)

@@ -139,7 +139,8 @@ function validateDate(User) {
 const schema = {
 NewUserBirthDate: Joi.date(),
 NewUserName: Joi.string().min(3).max(50).required(),
-NewUserPhoto: Joi.string()
+NewUserPhoto: Joi.string(),
+token:Joi.string()
 };
 return Joi.validate(User, schema);
 }

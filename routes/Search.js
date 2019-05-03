@@ -12,23 +12,17 @@ const router = express.Router();
 
 //db.stores.find( { $text: { $search: "java shop -coffee" } } )
 //db.products.find( { sku: { $regex: /789$/ } } )
-/**
- * @api{GET} /api/search/ search for books by author or by title or isbn
- 
- * @apiName Search
- * @apiGroup Search
- *
- * @apiParam {string} search_param search parameter text
- */
+
 router.get('/', async (req,res) => {
   retArr=Array();
     if(!req)
     res.status(404).json({  // sends a json with 404 code
         success: false ,  // book not retrieved  
         "Message":"No valid parameter is given !"});
-    books = await Books.find( { Title: { $regex: '.*'+req.body.search_param+'.*' } },async (err,doc1) =>{
+    books = await Books.find( { Title: { $regex: '.*'+req.query.search_param+'.*' } },async (err,doc1) =>{
         if (err)
         {
+         
             console.log("=========================");
             console.log(err);
             console.log("=========================");
@@ -38,6 +32,7 @@ router.get('/', async (req,res) => {
         }
         else
         {
+          console.log(doc1);
            // console.log("=========================");
            // console.log(doc1);
            // console.log("=========================");
@@ -45,7 +40,7 @@ router.get('/', async (req,res) => {
           
           }
      } );
-     books1 = await Books.find( { AuthorName: { $regex: '.*'+req.body.search_param+'.*' } },async (err,doc1) =>{
+     books1 = await Books.find( { AuthorName: { $regex: '.*'+req.query.search_param+'.*' } },async (err,doc1) =>{
       if (err)
       {
           console.log("=========================");
