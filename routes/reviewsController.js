@@ -213,7 +213,7 @@ Router.post('/rate', auth,async (req, res) => {
 
  */
 ////////////////////////////////////////////
-   Router.all('/getrev',async(req,res)=>{
+   Router.get('/getrev',async(req,res)=>{
     const { error } = validateget(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     var likedArr =Array();

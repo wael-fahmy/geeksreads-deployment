@@ -131,7 +131,8 @@ function validateStatuses(Status) {
         StatusBody: Joi.string().required().max(200),
         ReviewId: Joi.string(),
         CommentId: Joi.string(),
-        StatusDate:  Joi.date().iso()
+        StatusDate:  Joi.date().iso(),
+        token:Joi.string()
     };
     return Joi.validate(Status, schema);
     }
