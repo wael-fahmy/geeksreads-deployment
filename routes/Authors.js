@@ -359,25 +359,31 @@ router.post('/isfollowed', auth,async (req, res) => { //sends post request to /i
   console.log(req.params.userId_tobefollowed);
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
-  await  mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.user_id},{FollowingAuthorId:req.query.auth_id}]},
-      (err,doc) =>{
-       
-       // console.log(to(doc.FollowingAuthorId));
+  mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.user_id},{FollowingAuthorId:req.query.auth_id}]},
+    (err,doc) =>{
+     
+     // console.log(to(doc.FollowingAuthorId));
 
-        if(!doc || err)
-        {
-       //   console.log(doc);
-          res.status(404).json({  // sends a json with 404 code
-             
-             "isfollowed":"false"});
-        }
-         else
-         {
-         //console.log(doc);
-         res.status(200).json({"isfollowed":"true"});
-        
-         }
-        });
+      if(!doc)
+      {
+     //   console.log(doc);
+        res.status(200).json({  // sends a json with 202
+           
+           "isfollowed":"false"});
+      }
+       else if(err)
+       {
+        res.status(404).json({  // sends a json with 404 code
+           
+          "isfollowed":"error"});
+       }
+       else
+       {
+       //console.log(doc);
+       res.status(200).json({"isfollowed":"true"});
+      
+       }
+      });
  });
 
   /***************************
