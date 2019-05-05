@@ -176,13 +176,13 @@ router.get('/name', async (req,res) => {
     console.log(req.params.auth_id);
     console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserId);*/
-    mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
+    await mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
     
       {
-          AuthorId :  req.query.auth_id //access document of Author I want to unfollow
+          AuthorId :  req.body.auth_id //access document of Author I want to unfollow
       },
       {$pull: { // pull from end of array of the users following this author
-        FollowingUserId:req.query.myuserId
+        FollowingUserId:req.body.myuserId
       }}
       ,function (err,doc) { // error handling and checking for returned mongo doc after query
   
@@ -201,12 +201,12 @@ router.get('/name', async (req,res) => {
          "Message":"Sucessfully done"});
       }
     });
-    mongoose.connection.collection("Users").updateOne(
+   await mongoose.connection.collection("users").updateOne(
         {
-            UserId :req.query.myuserId//access document of currently logged In user 
+            UserId :req.body.myuserId//access document of currently logged In user 
         },
         {$pull: { // pull from end of array of the Authors that the user follows
-          FollowingAuthorId: req.query.auth_id
+          FollowingAuthorId: req.body.auth_id
         }});
         
        
@@ -247,7 +247,7 @@ router.get('/name', async (req,res) => {
    // console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     //console.log("my"+req.query.myuserId);
       
-    await  mongoose.connection.collection("Authors").findOne({  AuthorId :  req.query.auth_id},
+    await  mongoose.connection.collection("Authors").findOne({  AuthorId :  req.body.auth_id},
       function (err,doc) { // error handling and checking for returned mongo doc after query
   
         if (!doc || err) //matched count checks for number of affected documents by query
@@ -257,7 +257,7 @@ router.get('/name', async (req,res) => {
         }
         else
         {
-           mongoose.connection.collection("users").findOne({  UserId :  req.query.myuserId},
+          await mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserId},
             function (err,doc) { // error handling and checking for returned mongo doc after query
   
               if (!doc  || err) //matched count checks for number of affected documents by query
@@ -267,18 +267,18 @@ router.get('/name', async (req,res) => {
               }
               else
               {
-                mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.myuserId},{FollowingAuthorId:req.query.auth_id}]},
+               await mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserId},{FollowingAuthorId:req.query.auth_id}]},
               function (err,doc) { // error handling and checking for returned mongo doc after query
   
                 if (!doc  || err) //matched count checks for number of affected documents by query
                 { 
-                  mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
+                await  mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
 
                     {
-                        AuthorId :  req.query.auth_id //access document of Author I want to follow
+                        AuthorId :  req.body.auth_id //access document of Author I want to follow
                     },
                     {$push: { // push to end of array of the users following this author
-                      FollowingUserId:req.query.myuserId
+                      FollowingUserId:req.body.myuserId
                     }}
                     ,function (err,doc) { // error handling and checking for returned mongo doc after query
                 
@@ -297,12 +297,12 @@ router.get('/name', async (req,res) => {
                        "Message":"Sucessfully done"});
                     }
                   });
-                  mongoose.connection.collection("users").updateOne(
+                await mongoose.connection.collection("users").updateOne(
                       {
-                          UserId :req.query.myuserId//access document of currently logged In user 
+                          UserId :req.body.myuserId//access document of currently logged In user 
                       },
                       {$push: { // push to end of array of the Authors that the user follows
-                        FollowingAuthorId: req.query.auth_id
+                        FollowingAuthorId: req.body.auth_id
                       }});
                 }
               else
@@ -359,7 +359,7 @@ router.post('/isfollowed', auth,async (req, res) => { //sends post request to /i
   console.log(req.params.userId_tobefollowed);
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
-  mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.user_id},{FollowingAuthorId:req.query.auth_id}]},
+  mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.user_id},{FollowingAuthorId:req.body.auth_id}]},
     (err,doc) =>{
      
      // console.log(to(doc.FollowingAuthorId));
@@ -419,7 +419,7 @@ router.post('/numbooks', async (req, res) => { //sends post request to /numbooks
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
   //  mongoose.connection.collection("Authors").aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}},
-  await mongoose.connection.collection("Authors").findOne({AuthorId:req.query.auth_id},  
+  await mongoose.connection.collection("Authors").findOne({AuthorId:req.body.auth_id},  
   (err,doc) =>{
        //> db.Authors.aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}}).pretty()
        //console.log(doc.BookId.length);

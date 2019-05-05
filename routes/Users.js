@@ -967,7 +967,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
           "AuthorName": book.AuthorName,
           "RateCount":book.RateCount,
           "Published": book.Published,
-          "Publisher": book.Publisher
+          "Publisher": book.Publisher,
+          "ReviewCount":book.ReviewCount
        };
        Result.ReadData.push(bookinfo);
     }
@@ -986,7 +987,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
           "AuthorName": book.AuthorName,
           "RateCount":book.RateCount,
           "Published": book.Published,
-          "Publisher": book.Publisher
+          "Publisher": book.Publisher,
+          "ReviewCount":book.ReviewCount
        };
        Result.ReadingData.push(bookinfo);
     }
@@ -1005,7 +1007,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
           "AuthorName": book.AuthorName,
           "RateCount":book.RateCount,
           "Published": book.Published,
-          "Publisher": book.Publisher
+          "Publisher": book.Publisher,
+          "ReviewCount":book.ReviewCount
        };
        Result.WantToReadData.push(bookinfo);
     }
@@ -1123,7 +1126,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
             "AuthorName": book.AuthorName,
             "RateCount":book.RateCount,
             "Published": book.Published,
-            "Publisher": book.Publisher
+            "Publisher": book.Publisher,
+            "ReviewCount":book.ReviewCount
          };
          Result.ReadData.push(bookinfo);
       }
@@ -1238,7 +1242,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
               "AuthorName": book.AuthorName,
               "RateCount":book.RateCount,
               "Published": book.Published,
-              "Publisher": book.Publisher
+              "Publisher": book.Publisher,
+              "ReviewCount":book.ReviewCount
            };
            Result.ReadingData.push(bookinfo);
         }
@@ -1351,7 +1356,8 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
                 "AuthorName": book.AuthorName,
                 "RateCount":book.RateCount,
                 "Published": book.Published,
-                "Publisher": book.Publisher
+                "Publisher": book.Publisher,
+                "ReviewCount":book.ReviewCount
              };
              Result.WantToReadData.push(bookinfo);
           }
@@ -1634,7 +1640,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
 
 
 //Follow User
-router.post('/follow', async (req, res) => { //sends post request to /Follow End point through the router
+router.post('/follow', auth,async (req, res) => { //sends post request to /Follow End point through the router
   /* console.log(req.body.userId_tobefollowed);
   console.log(req.userId_tobefollowed);
   console.log(req.params.userId_tobefollowed);
@@ -1642,7 +1648,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
   console.log("my"+req.query.myuserid);*/
  // console.log("my"+req.query.myuserid);
   //console.log(req.query.userId_tobefollowed);
- await  mongoose.connection.collection("users").findOne({  UserId :  req.query.userId_tobefollowed},
+ await  mongoose.connection.collection("users").findOne({  UserId :  req.body.userId_tobefollowed},
     function (err,doc) { // error handling and checking for returned mongo doc after query
 
       if (!doc || err) //matched count checks for number of affected documents by query
@@ -1652,7 +1658,7 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
       }
       else
       {
-         mongoose.connection.collection("users").findOne({  UserId :  req.query.myuserid},
+       await  mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserid},
           function (err,doc) { // error handling and checking for returned mongo doc after query
 
             if (!doc  || err) //matched count checks for number of affected documents by query
@@ -1662,17 +1668,17 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
             }
             else
             {
-              mongoose.connection.collection("users").findOne({$and: [{UserId:req.query.myuserid},{FollowingUserId:req.query.userId_tobefollowed}]},
+            await  mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserid},{FollowingUserId:req.body.userId_tobefollowed}]},
             function (err,doc) { // error handling and checking for returned mongo doc after query
 
               if(!doc || err)
               {
-                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+               await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
                   {
-                      UserId :  req.query.userId_tobefollowed //access document of user i want to follow
+                      UserId :  req.body.userId_tobefollowed //access document of user i want to follow
                   },
                   {$push: { // Push to end of array of the user's followers
-                    FollowersUserId:req.query.myuserid
+                    FollowersUserId:req.body.myuserid
                   }}
                   ,function (err,doc) { // error handling and checking for returned mongo doc after query
             
@@ -1688,12 +1694,12 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
                       "Message":"Sucessfully done"});
                    }
                 });
-                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+              await  mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
                     {
-                        UserId :req.query.myuserid//access document of currently logged In user
+                        UserId :req.body.myuserid//access document of currently logged In user
                     },
                     {$push: { // Push to end of array of the users I follow
-                      FollowingUserId: req.query.userId_tobefollowed
+                      FollowingUserId: req.body.userId_tobefollowed
                     }});
               }
               else
@@ -1749,20 +1755,20 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
  */
 
   //UNFollow User
-  router.post('/unfollow', async (req, res) => { //sends post request to /unFollow End point through the router
+  router.post('/unfollow', auth,async (req, res) => { //sends post request to /unFollow End point through the router
     /* console.log(req.body.userId_tobefollowed);
     console.log(req.userId_tobefollowed);
     console.log(req.params.userId_tobefollowed);
     console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserid);*/
 
-      mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+     await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
 
         {
-            UserId :  req.query.userId_tobefollowed //access document of user i want to unfollow
+            UserId :  req.body.userId_tobefollowed //access document of user i want to unfollow
         },
         {$pull: { // pull from end of array of the users I follow
-          FollowersUserId:req.query.myuserid
+          FollowersUserId:req.body.myuserid
         }}
         ,function (err,doc) { // error handling and checking for returned mongo doc after query
 
@@ -1781,12 +1787,12 @@ router.post('/follow', async (req, res) => { //sends post request to /Follow End
            "Message":"Sucessfully done"});
         }
       });
-      mongoose.connection.collection("users").updateOne(
+     await mongoose.connection.collection("users").updateOne(
           {
-              UserId :req.query.myuserid//access document of currently logged In user
+              UserId :req.body.myuserid//access document of currently logged In user
           },
           {$pull: { // pull from end of array of the users I follow
-            FollowingUserId: req.query.userId_tobefollowed
+            FollowingUserId: req.body.userId_tobefollowed
           }});
 
 
@@ -1967,20 +1973,20 @@ router.all("/Notifications" ,auth ,async(req,res)=>
  * @apiError Notification-Not-Found The <code>Notification</code> was not found
  *
   */
- router.post("/Notification/seen" ,(req,res)=>
+ router.post("/Notification/seen" ,auth,(req,res)=>
  {
-      if(req.query.NotificationId==null)
+      if(req.body.NotificationId==null)
       {
          return  res.status(400).send("Bad request no .NotificationId  Id is there");
      }
  
-       if (req.query.NotificationId.length == 0)
+       if (req.body.NotificationId.length == 0)
       {
         return  res.status(400).send("Bad request .NotificationId Id is there");
       }
  
  
-   Notification.findOneAndUpdate( {'NotificationId':req.query.NotificationId},
+   Notification.findOneAndUpdate( {'NotificationId':req.body.NotificationId},
    { $set : {'Seen' :true} },
    (err,doc)=>
  
@@ -1989,7 +1995,7 @@ router.all("/Notifications" ,auth ,async(req,res)=>
      {
      return res.status(404).send("No Notifications were found");
      }
-     if(doc.lenght==0)
+     if(doc.length==0)
      {
  
     return res.status(404).send("No Notifications were found");

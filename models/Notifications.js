@@ -128,7 +128,7 @@ const Notification = mongoose.model('Notification', NotificationSchema);
 async function CreatNotification( NotifiedUserId ,ReviewId , Comment1Id, Type, MakerId, Book1Id )
 {
 // basic infos
-if (Type != "Comment" ||Type != "ReviewLike"||Type != "Follow" )
+if (Type != "Comment" && Type != "ReviewLike" && Type != "Follow" )
 {
   return "wrongType";
 }
@@ -190,7 +190,6 @@ await review.findOne({ "reviewId": ReviewId},(err,doc) =>
  }
 
 });
-
 await Books.findOne({"BookId":Book1Id},(err,doc) =>
   {    
       if (!doc)
@@ -199,6 +198,7 @@ await Books.findOne({"BookId":Book1Id},(err,doc) =>
     }
     else
     {
+
       newNotification.BookId=doc.BookId;
       newNotification.BookName=doc.Title;
       newNotification.BookPhoto=doc.Cover;

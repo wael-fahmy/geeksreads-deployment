@@ -101,12 +101,12 @@ const StatusesSchema = new mongoose.Schema({
     {
         type: String
     },
-    AutorName:
+    AuthorName:
     {
       type: String
    
     },
-    AutorId:
+    AuthorId:
     {
       type: String
    
@@ -131,8 +131,7 @@ function validateStatuses(Status) {
         StatusBody: Joi.string().required().max(200),
         ReviewId: Joi.string(),
         CommentId: Joi.string(),
-        StatusDate:  Joi.date().iso(),
-        token:Joi.string()
+        StatusDate:  Joi.date().iso()
     };
     return Joi.validate(Status, schema);
     }
@@ -149,8 +148,13 @@ function validateStatuses(Status) {
  */
 
 async function CreatStatuses( FollowerId ,ReviewId , Comment1Id, Type, NumberOfStars, Book1Id )
-{
+{ 
 // basic infos
+if (Type != "Comment" &&Type != "Review" )
+{
+  var x ={"TypeSuccess": false };
+  return x;
+}
   var  newStatus = new Statuses(
     {
       "UserId":FollowerId,
@@ -169,7 +173,7 @@ await review.findOne({"reviewId":ReviewId},(err,doc) =>
 {    
     if (!doc)
   {
-    return console.log("Wrong review Id")
+    return "Wrong review Id"
   }
   else
   {
@@ -196,7 +200,7 @@ await review.findOne({"reviewId":ReviewId},(err,doc) =>
       newStatus.BookId=doc.BookId;
       newStatus.BookName=doc.Title;
       newStatus.BookPhoto=doc.Cover;    
-      newStatus.AuthorName= doc.AuthorName;
+      newStatus.AuthorName=doc.AuthorName;
       newStatus.AuthorId= doc.AuthorId;
 
     }
@@ -211,8 +215,8 @@ await comment.findOne({CommentId:Comment1Id},(err,doc) =>
 {    
     if (!doc)
   {
-    return console.log("Wrong comment Id")
-  }
+    return "Wrong comment Id"
+    }
   else
   {
     newStatus.CommentId=doc.CommentId;

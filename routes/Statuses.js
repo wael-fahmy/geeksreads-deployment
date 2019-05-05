@@ -176,14 +176,14 @@ router.post("/update",auth,(req,res)=>
 
 router.all("/show" ,auth,async(req,res)=>
 {
-  if(req.query.UserId==null)
+  if(req.body.UserId==null)
   {
      return  res.status(400).send("Bad request no UserID  Id is there");
  }
 
-   if (req.query.UserId.length == 0)
+   if (req.body.UserId.length == 0)
   {
-    return  res.status(400).send("Bad request no Satatus Id is there");
+    return  res.status(400).send("Bad request no Status Id is there");
   }
 
 

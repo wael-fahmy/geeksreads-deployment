@@ -39,10 +39,10 @@ const auth = require('../middleware/auth');
 
  */
 Router.all('/list',async (req, res) => {
-    const { error } = validateget(req.body);
+    const { error } = validateget(req.query);
   if (error) return res.status(400).send(error.details[0].message);
 
-  comment.find({"ReviewId" : req.body.ReviewId}).then(commArr => {
+  comment.find({"ReviewId" : req.query.ReviewId}).then(commArr => {
       if(commArr.length==0) return res.status(404).json({ success: false });
       res.status(200).json(commArr);
   }).catch(err => res.status(404).json({ success: false }));

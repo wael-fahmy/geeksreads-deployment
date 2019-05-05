@@ -214,11 +214,11 @@ Router.post('/rate', auth,async (req, res) => {
  */
 ////////////////////////////////////////////
    Router.get('/getrev',async(req,res)=>{
-    const { error } = validateget(req.body);
+    const { error } = validateget(req.query);
     if (error) return res.status(400).send(error.details[0].message);
     var likedArr =Array();
-    let Review = await review.find({bookId:req.body.bookId});
-    let Result = await user.find({ 'UserId': req.body.UserId}).select('-_id LikedReview');
+    let Review = await review.find({bookId:req.query.bookId});
+    let Result = await user.find({ 'UserId': req.query.UserId}).select('-_id LikedReview');
     var n=Review.length;
     console.log(Review);
     Result=Result[0].LikedReview;
