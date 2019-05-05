@@ -1648,7 +1648,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
   console.log("my"+req.query.myuserid);*/
  // console.log("my"+req.query.myuserid);
   //console.log(req.query.userId_tobefollowed);
- await  mongoose.connection.collection("users").findOne({  UserId :  req.body.userId_tobefollowed},
+   mongoose.connection.collection("users").findOne({  UserId :  req.body.userId_tobefollowed},
     function (err,doc) { // error handling and checking for returned mongo doc after query
 
       if (!doc || err) //matched count checks for number of affected documents by query
@@ -1658,7 +1658,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
       }
       else
       {
-       await  mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserid},
+         mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserid},
           function (err,doc) { // error handling and checking for returned mongo doc after query
 
             if (!doc  || err) //matched count checks for number of affected documents by query
@@ -1668,12 +1668,12 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
             }
             else
             {
-            await  mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserid},{FollowingUserId:req.body.userId_tobefollowed}]},
+              mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserid},{FollowingUserId:req.body.userId_tobefollowed}]},
             function (err,doc) { // error handling and checking for returned mongo doc after query
 
               if(!doc || err)
               {
-               await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
                   {
                       UserId :  req.body.userId_tobefollowed //access document of user i want to follow
                   },
@@ -1694,7 +1694,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
                       "Message":"Sucessfully done"});
                    }
                 });
-              await  mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+                mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
                     {
                         UserId :req.body.myuserid//access document of currently logged In user
                     },
@@ -1762,7 +1762,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
     console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserid);*/
 
-     await mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
+      mongoose.connection.collection("users").updateOne( // accesses basic mongodb driver to update one document of Users Collection
 
         {
             UserId :  req.body.userId_tobefollowed //access document of user i want to unfollow
@@ -1787,7 +1787,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
            "Message":"Sucessfully done"});
         }
       });
-     await mongoose.connection.collection("users").updateOne(
+      mongoose.connection.collection("users").updateOne(
           {
               UserId :req.body.myuserid//access document of currently logged In user
           },

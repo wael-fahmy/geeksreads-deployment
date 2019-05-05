@@ -176,7 +176,7 @@ router.get('/name', async (req,res) => {
     console.log(req.params.auth_id);
     console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     console.log("my"+req.query.myuserId);*/
-    await mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
+     mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
     
       {
           AuthorId :  req.body.auth_id //access document of Author I want to unfollow
@@ -201,7 +201,7 @@ router.get('/name', async (req,res) => {
          "Message":"Sucessfully done"});
       }
     });
-   await mongoose.connection.collection("users").updateOne(
+    mongoose.connection.collection("users").updateOne(
         {
             UserId :req.body.myuserId//access document of currently logged In user 
         },
@@ -247,7 +247,7 @@ router.get('/name', async (req,res) => {
    // console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     //console.log("my"+req.query.myuserId);
       
-    await  mongoose.connection.collection("Authors").findOne({  AuthorId :  req.body.auth_id},
+      mongoose.connection.collection("Authors").findOne({  AuthorId :  req.body.auth_id},
       function (err,doc) { // error handling and checking for returned mongo doc after query
   
         if (!doc || err) //matched count checks for number of affected documents by query
@@ -257,7 +257,7 @@ router.get('/name', async (req,res) => {
         }
         else
         {
-          await mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserId},
+           mongoose.connection.collection("users").findOne({  UserId :  req.body.myuserId},
             function (err,doc) { // error handling and checking for returned mongo doc after query
   
               if (!doc  || err) //matched count checks for number of affected documents by query
@@ -267,12 +267,12 @@ router.get('/name', async (req,res) => {
               }
               else
               {
-               await mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserId},{FollowingAuthorId:req.query.auth_id}]},
+                mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserId},{FollowingAuthorId:req.query.auth_id}]},
               function (err,doc) { // error handling and checking for returned mongo doc after query
   
                 if (!doc  || err) //matched count checks for number of affected documents by query
                 { 
-                await  mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
+                  mongoose.connection.collection("Authors").updateOne( // accesses basic mongodb driver to update one document of Authors Collection
 
                     {
                         AuthorId :  req.body.auth_id //access document of Author I want to follow
@@ -297,7 +297,7 @@ router.get('/name', async (req,res) => {
                        "Message":"Sucessfully done"});
                     }
                   });
-                await mongoose.connection.collection("users").updateOne(
+                 mongoose.connection.collection("users").updateOne(
                       {
                           UserId :req.body.myuserId//access document of currently logged In user 
                       },
@@ -419,7 +419,7 @@ router.post('/numbooks', async (req, res) => { //sends post request to /numbooks
   console.log(req.query.userId_tobefollowed);  //ONLY WORKINGGGGGGGGGGGG
   console.log("my"+req.query.myuserid);*/
   //  mongoose.connection.collection("Authors").aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}},
-  await mongoose.connection.collection("Authors").findOne({AuthorId:req.body.auth_id},  
+   mongoose.connection.collection("Authors").findOne({AuthorId:req.body.auth_id},  
   (err,doc) =>{
        //> db.Authors.aggregate({$match:{AuthorId:"5c9115731d3c81c7075b6577"}},{$project:{count:{$size:"$BookId"}}}).pretty()
        //console.log(doc.BookId.length);
