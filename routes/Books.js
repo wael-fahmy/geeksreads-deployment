@@ -120,14 +120,9 @@ router.get('/id', async (req,res) => {
  * @apiError Author-not-found   The <code>Author</code> was not found.
  */
 
-router.get('/find', async (req,res) => {
-  
- 
-  Books.find({ISBN:req.query.search_param},
-  (err,doc) =>{
-   
-    console.log(doc);
-      
+router.get('/author', async (req,res) => {
+  Books.find({ISBN:req.query.search_param},(err,doc) =>{
+    console.log(doc);   
     if(!doc|| doc.length ==0)
     {
       console.log(doc);
