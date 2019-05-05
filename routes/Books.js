@@ -81,7 +81,7 @@ router.get('/id', async (req,res) => {
  * @api {GET} /api/books/author Find book by title, authorID, or ISBN. 
  * @apiVersion 0.0.0
  * @apiName FindBooks
- * @apiGroup Author 
+ * @apiGroup Books 
  *
  *
  * @apiParam {String} search_param authorid or title or isbn
@@ -120,7 +120,7 @@ router.get('/id', async (req,res) => {
  * @apiError Author-not-found   The <code>Author</code> was not found.
  */
 
-router.get('/author', async (req,res) => {
+router.get('/find', async (req,res) => {
   
  
   Books.find({ISBN:req.query.search_param},
