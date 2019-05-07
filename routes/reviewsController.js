@@ -160,7 +160,7 @@ Router.post('/rate', auth,async (req, res) => {
                     user.findOneAndUpdate({"userId": req.body.userId }, { $push: { ratedBooks: { bookId: req.body.bookId, rating: req.body.rating } } }, (err1, user2)=>{
                         if(!err1) {
                             console.log(req.body);
-                            return res.status(200).send("Updated Succesfuly");
+                            return res.status(200).send("Updated Succesfully");
                         }
                 else {
                             return res.status(404).send("Not found");
