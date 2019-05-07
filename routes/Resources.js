@@ -45,7 +45,7 @@ if (req.body.resourceId.lenght == 0)
 }   
 if (req.body.Type == "Review")
    {
-       let Result = await user.find({'UserId':req.body.User_Id}).select('-_id LikedReview');
+       let Result =  user.find({'UserId':req.body.User_Id}).select('-_id LikedReview');
       
     
           var exsist = Result[0].LikedReview.indexOf(req.body.resourceId);
@@ -141,7 +141,7 @@ router.post('/unlike',auth,(req,res)=>{
   if (req.body.Type == "Review")
      {
          console.log("heyReview");
-         let Result = await user.find({'UserId':req.body.User_Id}).select('-_id LikedReview');
+         let Result =  user.find({'UserId':req.body.User_Id}).select('-_id LikedReview');
         
       
          var exsist = Result[0].LikedReview.indexOf(req.body.resourceId);
