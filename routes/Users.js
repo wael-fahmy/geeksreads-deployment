@@ -707,7 +707,7 @@ router.post('/UpdateUserInfo', auth, async (req, res) => {
    let Read =  await User.findOne({ UserId: req.user._id, Read:req.body.BookId });
    let WantToRead = await User.findOne({ UserId: req.user._id, WantToRead:req.body.BookId });
    let Reading =  await User.findOne({ UserId: req.user._id, Reading:req.body.BookId });
-   if(!Read && !WantToRead && !Reading) return res.status(400).send({"ReturnMsg": "This BookId is not in any shelve, Please Add it to Shelf first"});
+   if(!Read && !WantToRead && !Reading) return res.status(200).send({"ReturnMsg": "This BookId is Not in any Shelf, Please Add it to Shelf First"});
   if (Read) res.status(200).send({"ReturnMsg": "Read"});
   else if (WantToRead) {res.status(200).send({"ReturnMsg": "Want To Read"});}
   else if (Reading) {res.status(200).send({"ReturnMsg": "Currently Reading"});}
