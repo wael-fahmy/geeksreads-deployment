@@ -120,8 +120,6 @@ review1.save(async(err,doc)=>{
  */
 //////////////////////////////
 Router.post('/remove',auth,async (req,res)=>{
-    const { error } = validateget(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
  review.findOneAndDelete({'reviewId':req.body.reviewId},(err)=>{
     if(err)
     {res.status(400).json({"deleteReviewSuc": false})}
