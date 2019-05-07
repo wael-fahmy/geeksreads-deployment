@@ -1648,7 +1648,7 @@ router.post('/follow', auth,async (req, res) => { //sends post request to /Follo
   console.log("my"+req.query.myuserid);*/
  // console.log("my"+req.query.myuserid);
   //console.log(req.query.userId_tobefollowed);
-   mongoose.connection.collection("users").findOne({  UserId :  req.body.userId_tobefollowed},
+  await mongoose.connection.collection("users").findOne({  UserId :  req.body.userId_tobefollowed},
     function (err,doc) { // error handling and checking for returned mongo doc after query
 
       if (!doc || err) //matched count checks for number of affected documents by query

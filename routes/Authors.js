@@ -247,7 +247,7 @@ router.get('/name', async (req,res) => {
    // console.log(req.query.auth_id);  //ONLY WORKINGGGGGGGGGGGG
     //console.log("my"+req.query.myuserId);
       
-      mongoose.connection.collection("Authors").findOne({  AuthorId :  req.body.auth_id},
+     await mongoose.connection.collection("Authors").findOne({  AuthorId :  req.body.auth_id},
       function (err,doc) { // error handling and checking for returned mongo doc after query
   
         if (!doc || err) //matched count checks for number of affected documents by query
@@ -267,7 +267,7 @@ router.get('/name', async (req,res) => {
               }
               else
               {
-                mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserId},{FollowingAuthorId:req.query.auth_id}]},
+                mongoose.connection.collection("users").findOne({$and: [{UserId:req.body.myuserId},{FollowingAuthorId:req.body.auth_id}]},
               function (err,doc) { // error handling and checking for returned mongo doc after query
   
                 if (!doc  || err) //matched count checks for number of affected documents by query
